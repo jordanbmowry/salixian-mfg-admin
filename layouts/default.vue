@@ -1,3 +1,61 @@
+<script setup>
+const userStore = useUserStore();
+const baseURL = useRuntimeConfig().public.baseURL;
+
+const displayName =
+  userStore.first_name && userStore.last_name
+    ? `${userStore.first_name} ${userStore.last_name}`
+    : userStore.email;
+
+import {
+  Dialog,
+  DialogPanel,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  TransitionChild,
+  TransitionRoot,
+} from '@headlessui/vue';
+import {
+  Bars3Icon,
+  HomeIcon,
+  UsersIcon,
+  XMarkIcon,
+} from '@heroicons/vue/24/outline';
+import { ChevronDownIcon } from '@heroicons/vue/20/solid';
+import { CheckBadgeIcon, DocumentIcon } from '@heroicons/vue/20/solid';
+import { useUserStore } from '~/stores/userStore';
+
+const navigation = ref([
+  { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
+  { name: 'Customers', href: '#', icon: UsersIcon, current: false },
+  { name: 'Users', href: '#', icon: CheckBadgeIcon, current: false },
+  { name: 'Orders', href: '#', icon: DocumentIcon, current: false },
+]);
+
+const userNavigation = ref([
+  { name: 'Your profile', func: () => {} },
+  {
+    name: 'Sign out',
+    func: async () => {
+      try {
+        userStore.$reset();
+        const { data } = await useFetch(`${baseURL}/users/logout`, {
+          method: 'POST',
+          credentials: 'include',
+        });
+        await navigateTo('/login');
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  },
+]);
+
+const sidebarOpen = ref(false);
+</script>
+
 <template>
   <div>
     <TransitionRoot as="template" :show="sidebarOpen">
@@ -53,12 +111,12 @@
               </TransitionChild>
               <!-- Sidebar component, swap this element with another sidebar if you like -->
               <div
-                class="flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6 pb-4"
+                class="flex grow flex-col gap-y-5 overflow-y-auto bg-stone-500 px-6 pb-4"
               >
                 <div class="flex h-16 shrink-0 items-center">
                   <img
                     class="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=white"
+                    src="~/assets/images/ak-47.png"
                     alt="Your Company"
                   />
                 </div>
@@ -67,12 +125,12 @@
                     <li>
                       <ul role="list" class="-mx-2 space-y-1">
                         <li v-for="item in navigation" :key="item.name">
-                          <a
-                            :href="item.href"
+                          <NuxtLink
+                            :to="item.href"
                             :class="[
                               item.current
-                                ? 'bg-indigo-700 text-white'
-                                : 'text-indigo-200 hover:text-white hover:bg-indigo-700',
+                                ? 'bg-stone-600 text-white'
+                                : 'text-stone-200 hover:text-white hover:bg-stone-600',
                               'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold',
                             ]"
                           >
@@ -81,52 +139,27 @@
                               :class="[
                                 item.current
                                   ? 'text-white'
-                                  : 'text-indigo-200 group-hover:text-white',
+                                  : 'text-stone-200 group-hover:text-white',
                                 'h-6 w-6 shrink-0',
                               ]"
                               aria-hidden="true"
                             />
                             {{ item.name }}
-                          </a>
+                          </NuxtLink>
                         </li>
                       </ul>
                     </li>
-                    <li>
-                      <div
-                        class="text-xs font-semibold leading-6 text-indigo-200"
-                      >
-                        Your teams
-                      </div>
-                      <ul role="list" class="-mx-2 mt-2 space-y-1">
-                        <li v-for="team in teams" :key="team.name">
-                          <a
-                            :href="team.href"
-                            :class="[
-                              team.current
-                                ? 'bg-indigo-700 text-white'
-                                : 'text-indigo-200 hover:text-white hover:bg-indigo-700',
-                              'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold',
-                            ]"
-                          >
-                            <span
-                              class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white"
-                              >{{ team.initial }}</span
-                            >
-                            <span class="truncate">{{ team.name }}</span>
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
+
                     <li class="mt-auto">
                       <a
                         href="#"
-                        class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-indigo-200 hover:bg-indigo-700 hover:text-white"
+                        class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-stone-200 hover:bg-stone-600 hover:text-white"
                       >
-                        <Cog6ToothIcon
-                          class="h-6 w-6 shrink-0 text-indigo-200 group-hover:text-white"
-                          aria-hidden="true"
+                        <font-awesome-icon
+                          class="h-6 w-6 shrink-0 text-stone-200 group-hover:text-white my-auto"
+                          :icon="['fas', 'arrow-right-from-bracket']"
                         />
-                        Settings
+                        Sign out
                       </a>
                     </li>
                   </ul>
@@ -144,7 +177,7 @@
     >
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div
-        class="flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6 pb-4"
+        class="flex grow flex-col gap-y-5 overflow-y-auto bg-stone-500 px-6 pb-4"
       >
         <div class="flex h-16 shrink-0 items-center">
           <img
@@ -158,12 +191,12 @@
             <li>
               <ul role="list" class="-mx-2 space-y-1">
                 <li v-for="item in navigation" :key="item.name">
-                  <a
-                    :href="item.href"
+                  <NuxtLink
+                    :to="item.href"
                     :class="[
                       item.current
-                        ? 'bg-indigo-700 text-white'
-                        : 'text-indigo-200 hover:text-white hover:bg-indigo-700',
+                        ? 'bg-stone-600 text-white'
+                        : 'text-stone-200 hover:text-white hover:bg-stone-600',
                       'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold',
                     ]"
                   >
@@ -172,50 +205,27 @@
                       :class="[
                         item.current
                           ? 'text-white'
-                          : 'text-indigo-200 group-hover:text-white',
+                          : 'text-stone-200 group-hover:text-white',
                         'h-6 w-6 shrink-0',
                       ]"
                       aria-hidden="true"
                     />
                     {{ item.name }}
-                  </a>
+                  </NuxtLink>
                 </li>
               </ul>
             </li>
-            <li>
-              <div class="text-xs font-semibold leading-6 text-indigo-200">
-                Your teams
-              </div>
-              <ul role="list" class="-mx-2 mt-2 space-y-1">
-                <li v-for="team in teams" :key="team.name">
-                  <a
-                    :href="team.href"
-                    :class="[
-                      team.current
-                        ? 'bg-indigo-700 text-white'
-                        : 'text-indigo-200 hover:text-white hover:bg-indigo-700',
-                      'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold',
-                    ]"
-                  >
-                    <span
-                      class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white"
-                      >{{ team.initial }}</span
-                    >
-                    <span class="truncate">{{ team.name }}</span>
-                  </a>
-                </li>
-              </ul>
-            </li>
+
             <li class="mt-auto">
               <a
                 href="#"
-                class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-indigo-200 hover:bg-indigo-700 hover:text-white"
+                class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-stone-200 hover:bg-stone-600 hover:text-white"
               >
-                <Cog6ToothIcon
-                  class="h-6 w-6 shrink-0 text-indigo-200 group-hover:text-white"
-                  aria-hidden="true"
+                <font-awesome-icon
+                  class="h-6 w-6 shrink-0 text-stone-200 group-hover:text-white my-auto"
+                  :icon="['fas', 'arrow-right-from-bracket']"
                 />
-                Settings
+                Sign out
               </a>
             </li>
           </ul>
@@ -225,7 +235,7 @@
 
     <div class="lg:pl-72">
       <div
-        class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8"
+        class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-stone-300 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8"
       >
         <button
           type="button"
@@ -299,66 +309,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-const userStore = useUserStore();
-const baseURL = useRuntimeConfig().public.baseURL;
-
-const displayName =
-  userStore.first_name && userStore.last_name
-    ? `${userStore.first_name} ${userStore.last_name}`
-    : userStore.email;
-
-import {
-  Dialog,
-  DialogPanel,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  TransitionChild,
-  TransitionRoot,
-} from '@headlessui/vue';
-import {
-  Bars3Icon,
-  Cog6ToothIcon,
-  HomeIcon,
-  UsersIcon,
-  XMarkIcon,
-} from '@heroicons/vue/24/outline';
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
-import { CheckBadgeIcon, DocumentIcon } from '@heroicons/vue/20/solid';
-import { useUserStore } from '~/stores/userStore';
-
-const navigation = [
-  { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
-  { name: 'Customers', href: '#', icon: UsersIcon, current: false },
-  { name: 'Users', href: '#', icon: CheckBadgeIcon, current: false },
-  { name: 'Orders', href: '#', icon: DocumentIcon, current: false },
-];
-const teams = [
-  { id: 1, name: 'Heroicons', href: '#', initial: 'H', current: false },
-  { id: 2, name: 'Tailwind Labs', href: '#', initial: 'T', current: false },
-  { id: 3, name: 'Workcation', href: '#', initial: 'W', current: false },
-];
-const userNavigation = [
-  { name: 'Your profile', func: () => {} },
-  {
-    name: 'Sign out',
-    func: async () => {
-      try {
-        userStore.$reset();
-        const { data } = await useFetch(`${baseURL}/users/logout`, {
-          method: 'POST',
-          credentials: 'include',
-        });
-        await navigateTo('/login');
-      } catch (error) {
-        console.error(error);
-      }
-    },
-  },
-];
-
-const sidebarOpen = ref(false);
-</script>

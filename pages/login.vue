@@ -81,18 +81,13 @@ function handleDismiss() {
         alt="Your Company"
       />
       <h1
-        class="mt-10 text-center text-4xl font-bold leading-9 tracking-tight text-gray-900"
+        class="mt-10 mb-5 text-center text-4xl font-bold leading-9 tracking-tight text-gray-900"
       >
         SalixianMFG Admin
       </h1>
-      <h2
-        class="mt-5 text-center text-2xl leading-9 tracking-tight text-gray-900"
-      >
-        Sign in
-      </h2>
     </div>
 
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
       <form class="space-y-6" @submit="onSubmit">
         <div>
           <label
@@ -107,7 +102,7 @@ function handleDismiss() {
               type="email"
               autocomplete="email"
               v-model="email"
-              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
             />
             <p class="text-red-600 text-sm m-0 p-0" v-if="emailError">
               {{ emailError }}
@@ -130,7 +125,7 @@ function handleDismiss() {
               type="password"
               autocomplete="current-password"
               v-model="password"
-              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
             />
             <p class="text-red-600 text-sm" v-if="passwordError">
               {{ passwordError }}
@@ -141,7 +136,7 @@ function handleDismiss() {
         <div>
           <button
             type="submit"
-            class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            class="flex w-full justify-center rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600"
             :disabled="formSubmittingInProcess"
           >
             <div v-if="!formSubmittingInProcess">Sign in</div>

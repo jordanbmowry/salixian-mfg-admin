@@ -1,22 +1,67 @@
-<script setup lang="ts">
-const baseURL = useRuntimeConfig().public.baseURL;
-const users = ref(null);
-
-const onClick = async () => {
-  try {
-    const response = await useFetch(`${baseURL}/users`, {
-      credentials: 'include',
-    });
-    // @ts-ignore
-    users.value = response.data.value;
-  } catch (error) {
-    // Handle the error here
-    console.error(error);
-  }
-};
-</script>
-
 <template>
-  <button @click="onClick">Get users</button>
-  <div v-if="users">{{ users }}</div>
+  <div>
+    <h3 class="text-base font-semibold leading-6 text-gray-900">
+      Last 30 days
+    </h3>
+
+    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        v-for="item in stats"
+        :key="item.id"
+        class="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6"
+      >
+        <dt>
+          <div class="absolute rounded-md bg-stone-500 p-3">
+            <component
+              :is="item.icon"
+              class="h-6 w-6 text-white"
+              aria-hidden="true"
+            />
+          </div>
+          <p class="ml-16 truncate text-sm font-medium text-gray-500">
+            {{ item.name }}
+          </p>
+        </dt>
+        <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
+          <p class="text-2xl font-semibold text-gray-900">{{ item.stat }}</p>
+        </dd>
+      </div>
+    </dl>
+  </div>
 </template>
+
+<script setup>
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/vue/20/solid';
+import {
+  CursorArrowRaysIcon,
+  EnvelopeOpenIcon,
+  UsersIcon,
+} from '@heroicons/vue/24/outline';
+
+const stats = [
+  {
+    id: 1,
+    name: 'Total Subscribers',
+    stat: '71,897',
+    icon: UsersIcon,
+    change: '122',
+    changeType: 'increase',
+  },
+  {
+    id: 2,
+    name: 'Avg. Open Rate',
+    stat: '58.16%',
+    icon: EnvelopeOpenIcon,
+    change: '5.4%',
+    changeType: 'increase',
+  },
+  {
+    id: 3,
+    name: 'Avg. Click Rate',
+    stat: '24.57%',
+    icon: CursorArrowRaysIcon,
+    change: '3.2%',
+    changeType: 'decrease',
+  },
+];
+</script>
