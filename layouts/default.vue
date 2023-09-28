@@ -35,7 +35,7 @@ const navigation = ref([
 ]);
 
 const userNavigation = ref([
-  { name: 'Your profile', func: () => {} },
+  { name: 'Your profile', func: () => {}, icon: ['fas', 'user'] },
   {
     name: 'Sign out',
     func: async () => {
@@ -50,6 +50,7 @@ const userNavigation = ref([
         console.error(error);
       }
     },
+    icon: ['fas', 'right-from-bracket'],
   },
 ]);
 
@@ -144,22 +145,29 @@ const sidebarOpen = ref(false);
                               ]"
                               aria-hidden="true"
                             />
+
                             {{ item.name }}
                           </NuxtLink>
                         </li>
                       </ul>
                     </li>
-
-                    <li class="mt-auto">
+                  </ul>
+                  <ul role="list" class="mt-auto space-y-1">
+                    <li
+                      v-for="item in userNavigation"
+                      :key="item.name"
+                      class="lg:flex mt-auto"
+                    >
                       <a
                         href="#"
+                        @click="item.func"
                         class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-stone-200 hover:bg-stone-600 hover:text-white"
                       >
                         <font-awesome-icon
                           class="h-6 w-6 shrink-0 text-stone-200 group-hover:text-white my-auto"
-                          :icon="['fas', 'arrow-right-from-bracket']"
+                          :icon="item.icon"
                         />
-                        Sign out
+                        {{ item.name }}
                       </a>
                     </li>
                   </ul>
@@ -217,16 +225,25 @@ const sidebarOpen = ref(false);
             </li>
 
             <li class="mt-auto">
-              <a
-                href="#"
-                class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-stone-200 hover:bg-stone-600 hover:text-white"
-              >
-                <font-awesome-icon
-                  class="h-6 w-6 shrink-0 text-stone-200 group-hover:text-white my-auto"
-                  :icon="['fas', 'arrow-right-from-bracket']"
-                />
-                Sign out
-              </a>
+              <ul role="list" class="-mx-2 space-y-1">
+                <li
+                  class="flex items-center"
+                  v-for="item in userNavigation"
+                  :key="item.name"
+                >
+                  <a
+                    href="#"
+                    @click="item.func"
+                    class="group -mx-2 flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-stone-200 hover:bg-stone-600 hover:text-white w-full mr-4"
+                  >
+                    <font-awesome-icon
+                      class="text-stone-200"
+                      :icon="item.icon"
+                    />
+                    <span>{{ item.name }}</span>
+                  </a>
+                </li>
+              </ul>
             </li>
           </ul>
         </nav>
@@ -291,7 +308,10 @@ const sidebarOpen = ref(false);
                         'block px-3 py-1 text-sm leading-6 text-gray-900 cursor-pointer',
                       ]"
                     >
-                      {{ item.name }}
+                      <font-awesome-icon :icon="item.icon" class="mr-2" />
+                      <span>
+                        {{ item.name }}
+                      </span>
                     </button>
                   </MenuItem>
                 </MenuItems>
