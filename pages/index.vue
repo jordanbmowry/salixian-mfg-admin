@@ -1,8 +1,6 @@
 <template>
   <div>
-    <h3 class="text-base font-semibold leading-6 text-gray-900">
-      Last 30 days
-    </h3>
+    <h3 class="text-base font-semibold leading-6 text-gray-900">Stats</h3>
 
     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       <div
@@ -31,7 +29,6 @@
 </template>
 
 <script setup>
-import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/vue/20/solid';
 import {
   CursorArrowRaysIcon,
   EnvelopeOpenIcon,
