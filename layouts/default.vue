@@ -28,14 +28,45 @@ import { CheckBadgeIcon, DocumentIcon } from '@heroicons/vue/20/solid';
 import { useUserStore } from '~/stores/userStore';
 
 const navigation = ref([
-  { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
-  { name: 'Customers', href: '#', icon: UsersIcon, current: false },
-  { name: 'Users', href: '#', icon: CheckBadgeIcon, current: false },
-  { name: 'Orders', href: '#', icon: DocumentIcon, current: false },
+  {
+    name: 'Dashboard',
+    href: '/',
+    icon: HomeIcon,
+  },
+  {
+    name: 'Customers',
+    href: '/customers',
+    icon: UsersIcon,
+  },
+  {
+    name: 'Users',
+    href: '/users',
+    icon: CheckBadgeIcon,
+  },
+  {
+    name: 'Orders',
+    href: '/orders',
+    icon: DocumentIcon,
+  },
 ]);
 
+const route = useRoute();
+const updatedNavigation = computed(() => {
+  return navigation.value.map((item) => ({
+    ...item,
+    current: item.href === route.path,
+  }));
+});
+
 const userNavigation = ref([
-  { name: 'Your profile', func: () => {}, icon: ['fas', 'user'] },
+  {
+    name: 'Your profile',
+    func: async () => {
+      console.log('clicked');
+      await navigateTo(`/users/${userStore.user_id}`);
+    },
+    icon: ['fas', 'user'],
+  },
   {
     name: 'Sign out',
     func: async () => {
@@ -125,7 +156,7 @@ const sidebarOpen = ref(false);
                   <ul role="list" class="flex flex-1 flex-col gap-y-7">
                     <li>
                       <ul role="list" class="-mx-2 space-y-1">
-                        <li v-for="item in navigation" :key="item.name">
+                        <li v-for="item in updatedNavigation" :key="item.name">
                           <NuxtLink
                             :to="item.href"
                             :class="[
@@ -158,8 +189,7 @@ const sidebarOpen = ref(false);
                       :key="item.name"
                       class="lg:flex mt-auto"
                     >
-                      <a
-                        href="#"
+                      <button
                         @click="item.func"
                         class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-stone-200 hover:bg-stone-600 hover:text-white"
                       >
@@ -168,7 +198,7 @@ const sidebarOpen = ref(false);
                           :icon="item.icon"
                         />
                         {{ item.name }}
-                      </a>
+                      </button>
                     </li>
                   </ul>
                 </nav>
@@ -198,7 +228,7 @@ const sidebarOpen = ref(false);
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
               <ul role="list" class="-mx-2 space-y-1">
-                <li v-for="item in navigation" :key="item.name">
+                <li v-for="item in updatedNavigation" :key="item.name">
                   <NuxtLink
                     :to="item.href"
                     :class="[
@@ -231,8 +261,7 @@ const sidebarOpen = ref(false);
                   v-for="item in userNavigation"
                   :key="item.name"
                 >
-                  <a
-                    href="#"
+                  <button
                     @click="item.func"
                     class="group -mx-2 flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-stone-200 hover:bg-stone-600 hover:text-white w-full mr-4"
                   >
@@ -241,7 +270,7 @@ const sidebarOpen = ref(false);
                       :icon="item.icon"
                     />
                     <span>{{ item.name }}</span>
-                  </a>
+                  </button>
                 </li>
               </ul>
             </li>
