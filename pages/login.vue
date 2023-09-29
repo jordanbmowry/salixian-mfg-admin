@@ -95,7 +95,7 @@ function handleDismiss() {
             class="block text-sm font-medium leading-6 text-gray-900"
             >Email address</label
           >
-          <div class="mt-2">
+          <div v-auto-animate class="mt-2">
             <input
               id="email"
               name="email"
@@ -118,7 +118,7 @@ function handleDismiss() {
               >Password</label
             >
           </div>
-          <div class="mt-2">
+          <div v-auto-animate class="mt-2">
             <input
               id="password"
               name="password"

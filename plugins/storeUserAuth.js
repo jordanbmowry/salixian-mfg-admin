@@ -9,10 +9,6 @@ export default defineNuxtPlugin(async (nuxt) => {
     async (to, from) => {
       const router = useRouter();
 
-      if (to.path === '/login' && from.path === '/login') {
-        return;
-      }
-
       const { data } = await useFetch(`${baseURL}/users/auth/status`, {
         credentials: 'include',
         headers: useRequestHeaders(['cookie']),
@@ -25,11 +21,11 @@ export default defineNuxtPlugin(async (nuxt) => {
       }
 
       if (isAuthenticated) {
-        userStore.$state = data.value?.data;
-
         if (to.path === '/login') {
           return router.push('/');
         }
+        if (userStore.user_id) return;
+        userStore.$state = data.value?.data;
       }
     },
     { global: true }

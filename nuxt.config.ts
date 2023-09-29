@@ -14,8 +14,10 @@ export default defineNuxtConfig({
   ],
   modules: [
     '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
     '@vee-validate/nuxt',
     '@nuxtjs/tailwindcss',
+    '@formkit/auto-animate/nuxt',
     '@vueuse/nuxt',
     [
       '@nuxtjs/google-fonts',

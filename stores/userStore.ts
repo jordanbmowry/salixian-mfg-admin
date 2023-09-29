@@ -27,4 +27,5 @@ export const useUserStore = defineStore('user', {
     updated_at: null,
     isAuthenticated: false,
   }),
+  persist: true,
 });
