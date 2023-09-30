@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Total Revenue by month</h2>
+    <h2 class="text-center mb-6">Total Revenue by month</h2>
     <BarChart :chartData="chartData" :options="options" />
   </div>
 </template>
@@ -8,13 +8,31 @@
 <script setup lang="ts">
 import { BarChart } from 'vue-chart-3';
 import type { ChartData } from 'chart.js';
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
+import 'chartjs-plugin-autocolors';
 
 const props = defineProps({
   monthlyRevenueData: {
     type: Object,
     required: true,
   },
+});
+
+const chartData = ref<ChartData>({ labels: [], datasets: [] });
+
+watchEffect(() => {
+  chartData.value = {
+    labels: props.monthlyRevenueData.months,
+    datasets: [
+      {
+        label: 'Monthly Revenues',
+        data: props.monthlyRevenueData.revenues,
+        backgroundColor: 'rgba(144, 238, 144, 0.2)', // Light green background color
+        borderColor: 'rgba(0, 128, 0, 1)', // Dark green border color
+        borderWidth: 1,
+      },
+    ],
+  };
 });
 
 const options = ref({
@@ -31,18 +49,5 @@ const options = ref({
       beginAtZero: true,
     },
   },
-});
-
-const chartData = ref({
-  labels: props.monthlyRevenueData.months.map((month: string) => month),
-  datasets: [
-    {
-      label: 'Monthly Revenues',
-      data: props.monthlyRevenueData.revenues,
-      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-      borderColor: 'rgba(75, 192, 192, 1)',
-      borderWidth: 1,
-    },
-  ],
 });
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Order Status Distribution by Month</h2>
+    <h2 class="text-center mb-6">Order Status Distribution by Month</h2>
     <BarChart :chartData="chartData" :options="options" />
   </div>
 </template>
@@ -9,6 +9,7 @@
 import { ref, watchEffect, defineProps } from 'vue';
 import { BarChart } from 'vue-chart-3';
 import type { ChartData } from 'chart.js';
+import 'chartjs-plugin-autocolors';
 
 const props = defineProps({
   orderStatusDistributionData: {
@@ -28,6 +29,9 @@ const options = ref({
   plugins: {
     legend: {
       display: true,
+    },
+    autocolors: {
+      mode: 'data',
     },
   },
   scales: {
@@ -54,11 +58,24 @@ watchEffect(() => {
     const allStatuses = Array.from(
       new Set(props.orderStatusDistributionData.statuses)
     );
-    const datasets = allStatuses.map((status) => ({
+    const backgroundColors = [
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(255, 206, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+    ];
+    const borderColors = [
+      'rgba(255, 99, 132, 1)',
+      'rgba(255, 206, 86, 1)',
+      'rgba(75, 192, 192, 1)',
+      'rgba(153, 102, 255, 1)',
+    ];
+
+    const datasets = allStatuses.map((status, index) => ({
       label: status,
       data: labels.map((label) => statusCounts[label][status] || 0),
-      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-      borderColor: 'rgba(75, 192, 192, 1)',
+      backgroundColor: backgroundColors[index],
+      borderColor: borderColors[index],
       borderWidth: 1,
     }));
 
