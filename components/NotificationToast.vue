@@ -33,7 +33,6 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/vue/20/solid';
 
 const props = defineProps([
