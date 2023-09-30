@@ -1,6 +1,95 @@
+<script setup lang="ts">
+import { formatMoney } from '~/utils';
+
+const baseUrl = useRuntimeConfig().public.baseURL;
+
+const numberOfCustomers = ref<number>();
+const numberOfOrders = ref<number>();
+const totalRevenue = ref<number>();
+const selectedDates = ref<string[]>([]);
+const monthlyRevenueData = ref<{ months: number[]; revenues: number[] }>();
+const orderStatusData = ref<{ counts: number[]; statuses: string[] }>();
+
+const defaultStartDate = new Date(new Date().getFullYear(), 0, 1).toISOString();
+const defaultEndDate = new Date().toISOString();
+
+const fetchData = async (url: string) => {
+  sessionStorage.clear();
+  const { data } = await useFetch(url, {
+    credentials: 'include',
+  });
+  // @ts-ignore
+  const {
+    revenue,
+    orderCount,
+    customerCount,
+    monthlyRevenue,
+    orderStatusDistribution,
+  } = data.value?.data;
+  numberOfCustomers.value = customerCount;
+  numberOfOrders.value = orderCount;
+  totalRevenue.value = revenue;
+  monthlyRevenueData.value = monthlyRevenue;
+  orderStatusData.value = orderStatusDistribution;
+};
+
+onMounted(() => {
+  fetchData(
+    `${baseUrl}/stats?startDate=${defaultStartDate}&endDate=${defaultEndDate}`
+  );
+});
+
+watch(selectedDates, () => {
+  if (selectedDates.value.length === 2) {
+    fetchData(
+      `${baseUrl}/stats?startDate=${selectedDates.value[0]}&endDate=${selectedDates.value[1]}`
+    );
+  }
+});
+
+const formattedNumberOfCustomers = computed(() => {
+  return numberOfCustomers.value?.toLocaleString();
+});
+
+const formattedNumberOfOrders = computed(() => {
+  return numberOfOrders.value?.toLocaleString();
+});
+
+const formattedTotalRevenue = computed(() => {
+  // @ts-ignore
+  return formatMoney(totalRevenue?.value);
+});
+
+const stats = ref([
+  {
+    id: 1,
+    name: 'Customers',
+    stat: formattedNumberOfCustomers,
+    icon: 'ic:round-supervised-user-circle',
+  },
+  {
+    id: 2,
+    name: 'Orders',
+    stat: formattedNumberOfOrders,
+    icon: 'icon-park-outline:notes',
+  },
+  {
+    id: 3,
+    name: 'Revenue',
+    stat: formattedTotalRevenue,
+    icon: 'ic:baseline-attach-money',
+  },
+]);
+</script>
+
 <template>
   <div>
-    <h3 class="text-base font-semibold leading-6 text-gray-900">Stats</h3>
+    <h1 class="font-semibold leading-6 text-4xl pb-10">Dashboard</h1>
+    <DatePicker type="date" v-model="selectedDates" range />
+
+    <h2 class="text-3xl font-semibold leading-6 text-gray-900 pt-10 pb-6">
+      Stats
+    </h2>
 
     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       <div
@@ -10,11 +99,7 @@
       >
         <dt>
           <div class="absolute rounded-md bg-stone-500 p-3">
-            <component
-              :is="item.icon"
-              class="h-6 w-6 text-white"
-              aria-hidden="true"
-            />
+            <Icon class="text-white" :name="item.icon" />
           </div>
           <p class="ml-16 truncate text-sm font-medium text-gray-500">
             {{ item.name }}
@@ -25,40 +110,16 @@
         </dd>
       </div>
     </dl>
+    <div>
+      <MonthlyRevenueChart
+        class="flex flex-col gap-4 my-6"
+        v-if="monthlyRevenueData"
+        :monthlyRevenueData="monthlyRevenueData"
+      />
+      <OrderStatusDistributionChart
+        v-if="orderStatusData"
+        :orderStatusDistributionData="orderStatusData"
+      />
+    </div>
   </div>
 </template>
-
-<script setup>
-import {
-  CursorArrowRaysIcon,
-  EnvelopeOpenIcon,
-  UsersIcon,
-} from '@heroicons/vue/24/outline';
-
-const stats = [
-  {
-    id: 1,
-    name: 'Total Subscribers',
-    stat: '71,897',
-    icon: UsersIcon,
-    change: '122',
-    changeType: 'increase',
-  },
-  {
-    id: 2,
-    name: 'Avg. Open Rate',
-    stat: '58.16%',
-    icon: EnvelopeOpenIcon,
-    change: '5.4%',
-    changeType: 'increase',
-  },
-  {
-    id: 3,
-    name: 'Avg. Click Rate',
-    stat: '24.57%',
-    icon: CursorArrowRaysIcon,
-    change: '3.2%',
-    changeType: 'decrease',
-  },
-];
-</script>

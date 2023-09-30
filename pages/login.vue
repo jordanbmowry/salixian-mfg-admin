@@ -29,7 +29,7 @@ const { value: password, errorMessage: passwordError } = useField('password');
 const onSubmit = handleSubmit(async (formData) => {
   try {
     formSubmittingInProcess.value = true;
-    const { data, status } = await useFetch<Partial<User>>(
+    const { data, error } = await useFetch<Partial<User>>(
       `${baseURL}/users/login`,
       {
         method: 'POST',
@@ -40,15 +40,14 @@ const onSubmit = handleSubmit(async (formData) => {
         },
       }
     );
-    console.log('status', status);
+    console.log('error', error);
     //@ts-ignore
     const userData: User = data.value?.data;
 
     if (userData) {
       userStore.$state = userData;
       userStore.isAuthenticated = true;
-      navigateTo('/');
-      return;
+      return await navigateTo('/');
     }
     toastVisible.value = true;
   } catch (error) {

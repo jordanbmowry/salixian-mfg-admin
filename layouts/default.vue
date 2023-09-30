@@ -23,8 +23,12 @@ import {
   UsersIcon,
   XMarkIcon,
 } from '@heroicons/vue/24/outline';
-import { ChevronDownIcon } from '@heroicons/vue/20/solid';
-import { CheckBadgeIcon, DocumentIcon } from '@heroicons/vue/20/solid';
+
+import {
+  CheckBadgeIcon,
+  DocumentIcon,
+  ChevronDownIcon,
+} from '@heroicons/vue/20/solid';
 import { useUserStore } from '~/stores/userStore';
 
 const navigation = ref([
@@ -73,7 +77,7 @@ const userNavigation = ref([
       try {
         userStore.$reset();
         const { data } = await useFetch(`${baseURL}/users/logout`, {
-          method: 'POST',
+          method: 'GET',
           credentials: 'include',
         });
         await navigateTo('/login');
