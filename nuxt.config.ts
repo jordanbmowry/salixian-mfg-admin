@@ -11,6 +11,7 @@ export default defineNuxtConfig({
   css: [
     '~/assets/css/main.css',
     '@fortawesome/fontawesome-svg-core/styles.css',
+    '@vuepic/vue-datepicker/dist/main.css',
   ],
   modules: [
     '@pinia/nuxt',
@@ -19,6 +20,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@formkit/auto-animate/nuxt',
     '@vueuse/nuxt',
+    'nuxt-icon',
     [
       '@nuxtjs/google-fonts',
       {
@@ -30,7 +32,11 @@ export default defineNuxtConfig({
       },
     ],
   ],
-  plugins: ['./plugins/storeUserAuth.js'],
+  plugins: [
+    './plugins/storeUserAuth.js',
+    './plugins/datepicker.js',
+    '~/plugins/chartjs.js',
+  ],
   pinia: {
     autoImports: ['defineStore', ['defineStore', 'definePiniaStore']],
   },
