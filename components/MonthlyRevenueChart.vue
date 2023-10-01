@@ -9,7 +9,6 @@
 import { BarChart } from 'vue-chart-3';
 import type { ChartData } from 'chart.js';
 import { ref, watchEffect } from 'vue';
-import 'chartjs-plugin-autocolors';
 
 const props = defineProps({
   monthlyRevenueData: {

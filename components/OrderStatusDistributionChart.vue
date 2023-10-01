@@ -9,7 +9,6 @@
 import { ref, watchEffect, defineProps } from 'vue';
 import { BarChart } from 'vue-chart-3';
 import type { ChartData } from 'chart.js';
-import 'chartjs-plugin-autocolors';
 
 const props = defineProps({
   orderStatusDistributionData: {
@@ -29,9 +28,6 @@ const options = ref({
   plugins: {
     legend: {
       display: true,
-    },
-    autocolors: {
-      mode: 'data',
     },
   },
   scales: {

@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { formatMoney } from '~/utils';
+import { format } from 'date-fns';
 
 const baseUrl = useRuntimeConfig().public.baseURL;
 
 const numberOfCustomers = ref<number>();
 const numberOfOrders = ref<number>();
 const totalRevenue = ref<number>();
-const selectedDates = ref<string[]>([]);
+const selectedDates = ref<string[]>([
+  new Date(new Date().getFullYear(), 0, 1).toISOString(),
+  new Date().toISOString(),
+]);
 const monthlyRevenueData = ref<{ months: number[]; revenues: number[] }>();
 const orderStatusData = ref<{ counts: number[]; statuses: string[] }>();
-
-const defaultStartDate = new Date(new Date().getFullYear(), 0, 1).toISOString();
-const defaultEndDate = new Date().toISOString();
 
 const fetchData = async (url: string) => {
   sessionStorage.clear();
@@ -35,7 +36,7 @@ const fetchData = async (url: string) => {
 
 onMounted(() => {
   fetchData(
-    `${baseUrl}/stats?startDate=${defaultStartDate}&endDate=${defaultEndDate}`
+    `${baseUrl}/stats?startDate=${selectedDates.value[0]}&endDate=${selectedDates.value[1]}`
   );
 });
 
@@ -50,6 +51,14 @@ watch(selectedDates, () => {
 const formattedNumberOfCustomers = computed(() => {
   return numberOfCustomers.value?.toLocaleString();
 });
+
+const formattedStartDate = computed(() =>
+  format(new Date(selectedDates.value[0]), 'MMMM d, yyyy')
+);
+
+const formattedEndDate = computed(() =>
+  format(new Date(selectedDates.value[1]), 'MMMM d, yyyy')
+);
 
 const formattedNumberOfOrders = computed(() => {
   return numberOfOrders.value?.toLocaleString();
@@ -88,7 +97,10 @@ const stats = ref([
     <DatePicker type="date" v-model="selectedDates" range />
 
     <h2 class="text-3xl font-semibold leading-6 text-gray-900 pt-10 pb-6">
-      Stats
+      Stats:
+      <span class="text-xl"
+        >{{ formattedStartDate }} - {{ formattedEndDate }}</span
+      >
     </h2>
 
     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -110,9 +122,8 @@ const stats = ref([
         </dd>
       </div>
     </dl>
-    <div>
+    <div class="flex flex-col gap-10 mt-10">
       <MonthlyRevenueChart
-        class="flex flex-col gap-4 my-6"
         v-if="monthlyRevenueData"
         :monthlyRevenueData="monthlyRevenueData"
       />
