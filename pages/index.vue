@@ -51,23 +51,21 @@ watch(selectedDates, () => {
 const formattedNumberOfCustomers = computed(() => {
   return numberOfCustomers.value?.toLocaleString();
 });
-
 const formattedStartDate = computed(() =>
   format(new Date(selectedDates.value[0]), 'MMMM d, yyyy')
 );
-
 const formattedEndDate = computed(() =>
   format(new Date(selectedDates.value[1]), 'MMMM d, yyyy')
 );
 
-const formattedNumberOfOrders = computed(() => {
-  return numberOfOrders.value?.toLocaleString();
-});
+const formattedNumberOfOrders = computed(() =>
+  numberOfOrders.value?.toLocaleString()
+);
 
-const formattedTotalRevenue = computed(() => {
+const formattedTotalRevenue = computed(() =>
   // @ts-ignore
-  return formatMoney(totalRevenue?.value);
-});
+  formatMoney(totalRevenue?.value)
+);
 
 const stats = ref([
   {
