@@ -1,10 +1,12 @@
 <template>
-  <div class="container flex flex-col h-full">
-    <div class="placeholder-rows flex-grow overflow-hidden flex flex-col">
+  <div style="height: 80dvh" class="flex flex-col h-full" ref="container">
+    <div
+      class="placeholder-rows flex-grow overflow-hidden flex flex-col h-full"
+    >
       <div
-        v-for="row in rows"
-        :key="'p-row-' + row"
-        class="placeholder-row placeholder flex-grow h-4 my-2"
+        v-for="n in computedRows"
+        :key="'p-row-' + n"
+        class="placeholder-row placeholder flex-grow"
       ></div>
     </div>
   </div>
@@ -12,11 +14,27 @@
 
 <script setup>
 const props = defineProps({
-  rows: {
+  rowHeight: {
     type: Number,
-    default: 10,
+    default: 20,
   },
 });
+
+const container = ref(null);
+const computedRows = computed(() => {
+  if (container.value) {
+    const containerHeight = container.value.clientHeight;
+    return Math.floor(containerHeight / props.rowHeight);
+  }
+  return 0;
+});
+
+onMounted(() => {
+  window.addEventListener('resize', () => {
+    computedRows.value;
+  });
+});
+console.log(computedRows.value);
 </script>
 
 <style>
