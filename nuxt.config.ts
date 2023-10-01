@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     '@formkit/auto-animate/nuxt',
     '@vueuse/nuxt',
     'nuxt-icon',
+    'nuxt-lodash',
     [
       '@nuxtjs/google-fonts',
       {

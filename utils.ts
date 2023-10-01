@@ -8,3 +8,16 @@ export function formatMoney(number: number) {
 
   return '$' + parts.join('.');
 }
+
+export function formatPhoneNumber(phoneNumber: string) {
+  // Remove all non-numeric characters from the phone number.
+  let cleaned = ('' + phoneNumber).replace(/\D/g, '');
+
+  // Check the length of the cleaned phone number.
+  let match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+  if (match) {
+    return '(' + match[1] + ') ' + match[2] + '-' + match[3];
+  }
+
+  return null;
+}
