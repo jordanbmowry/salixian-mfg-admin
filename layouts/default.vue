@@ -17,40 +17,31 @@ import {
   TransitionChild,
   TransitionRoot,
 } from '@headlessui/vue';
-import {
-  Bars3Icon,
-  HomeIcon,
-  UsersIcon,
-  XMarkIcon,
-} from '@heroicons/vue/24/outline';
-
-import {
-  CheckBadgeIcon,
-  DocumentIcon,
-  ChevronDownIcon,
-} from '@heroicons/vue/20/solid';
+import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline';
+import { ChevronDownIcon } from '@heroicons/vue/20/solid';
 import { useUserStore } from '~/stores/userStore';
 
 const navigation = ref([
   {
     name: 'Dashboard',
     href: '/',
-    icon: HomeIcon,
+    icon: ['fas', 'house'],
   },
   {
     name: 'Customers',
     href: '/customers',
-    icon: UsersIcon,
+    icon: ['fas', 'handshake'],
+  },
+
+  {
+    name: 'Orders',
+    href: '/orders',
+    icon: ['fas', 'money-bill'],
   },
   {
     name: 'Users',
     href: '/users',
-    icon: CheckBadgeIcon,
-  },
-  {
-    name: 'Orders',
-    href: '/orders',
-    icon: DocumentIcon,
+    icon: ['fas', 'users'],
   },
 ]);
 
@@ -170,18 +161,12 @@ const sidebarOpen = ref(false);
                               'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold',
                             ]"
                           >
-                            <component
-                              :is="item.icon"
-                              :class="[
-                                item.current
-                                  ? 'text-white'
-                                  : 'text-stone-200 group-hover:text-white',
-                                'h-6 w-6 shrink-0',
-                              ]"
-                              aria-hidden="true"
-                            />
-
-                            {{ item.name }}
+                            <div class="flex items-center gap-4">
+                              <font-awesome-icon :icon="item.icon" />
+                              <span>
+                                {{ item.name }}
+                              </span>
+                            </div>
                           </NuxtLink>
                         </li>
                       </ul>
@@ -242,17 +227,12 @@ const sidebarOpen = ref(false);
                       'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold',
                     ]"
                   >
-                    <component
-                      :is="item.icon"
-                      :class="[
-                        item.current
-                          ? 'text-white'
-                          : 'text-stone-200 group-hover:text-white',
-                        'h-6 w-6 shrink-0',
-                      ]"
-                      aria-hidden="true"
-                    />
-                    {{ item.name }}
+                    <div class="flex items-center gap-4">
+                      <font-awesome-icon :icon="item.icon" />
+                      <span>
+                        {{ item.name }}
+                      </span>
+                    </div>
                   </NuxtLink>
                 </li>
               </ul>
