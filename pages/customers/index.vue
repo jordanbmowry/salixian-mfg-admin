@@ -144,7 +144,12 @@
                 v-if="apiData.data"
                 class="divide-y divide-gray-200 bg-white"
               >
-                <tr v-for="customer in apiData.data" :key="customer.email">
+                <tr
+                  v-for="customer in apiData.data"
+                  :key="customer.email"
+                  class="cursor-pointer"
+                  @click="() => navigateToCustomer(customer.customer_id)"
+                >
                   <td
                     class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
                   >
@@ -164,7 +169,9 @@
                   <td
                     class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
                   >
-                    <a href="#" class="text-stone-600 hover:text-stone-900"
+                    <NuxtLink
+                      :to="`/customers/${customer.customer_id}/edit`"
+                      class="text-stone-600 hover:text-stone-900"
                       >Edit<span class="sr-only"
                         >,
                         {{
@@ -173,7 +180,7 @@
                             customer.last_name
                           )
                         }}</span
-                      ></a
+                      ></NuxtLink
                     >
                   </td>
                 </tr>
@@ -196,22 +203,22 @@
               </p>
             </div>
             <div class="flex flex-1 justify-between sm:justify-end">
-              <a
-                href="#"
+              <button
                 @click.prevent="handlePrev"
                 class="relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0"
                 :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-                >Previous</a
               >
-              <a
-                href="#"
+                Previous
+              </button>
+              <button
                 @click.prevent="handleNext"
                 class="relative ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0"
                 :class="{
                   'opacity-50 cursor-not-allowed': currentPage === totalPages,
                 }"
-                >Next</a
               >
+                Next
+              </button>
             </div>
           </nav>
         </div>
@@ -316,4 +323,15 @@ const computeEndItem = () => {
 const endItem = computed(computeEndItem);
 const totalItems = computed(() => apiData.value?.meta?.totalCount || 0);
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
+
+const navigateToCustomer = async (customerId: string) => {
+  await navigateTo(`/customers/${customerId}`);
+};
 </script>
+
+<style scoped>
+tr.cursor-pointer:hover {
+  transform: scale(1.01);
+  transition: all 0.3s;
+}
+</style>
