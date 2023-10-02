@@ -191,40 +191,14 @@
               </tbody>
             </table>
           </div>
-          <nav
-            class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
-            aria-label="Pagination"
-          >
-            <div class="hidden sm:block">
-              <p class="text-sm text-gray-700">
-                Showing
-                <span class="font-medium">{{ startItem }}</span>
-                to
-                <span class="font-medium">{{ endItem }}</span>
-                of
-                <span class="font-medium">{{ totalItems }}</span>
-                results
-              </p>
-            </div>
-            <div class="flex flex-1 justify-between sm:justify-end">
-              <button
-                @click.prevent="handlePrev"
-                class="relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
-                Previous
-              </button>
-              <button
-                @click.prevent="handleNext"
-                class="relative ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0"
-                :class="{
-                  'opacity-50 cursor-not-allowed': currentPage === totalPages,
-                }"
-              >
-                Next
-              </button>
-            </div>
-          </nav>
+          <Pagination
+            @update:current-page="handleUpdateCurrentPage"
+            :currentPage="currentPage"
+            :totalPages="totalPages"
+            :startItem="startItem"
+            :endItem="endItem"
+            :totalItems="totalItems"
+          />
         </div>
       </div>
     </div>
@@ -300,17 +274,6 @@ function createFullName(first_name: string, last_name: string) {
   return `${first_name} ${last_name}`;
 }
 
-const handleNext = () => {
-  currentPage.value = Math.min(
-    currentPage.value + 1,
-    apiData.value?.meta.totalPages
-  );
-};
-
-const handlePrev = () => {
-  currentPage.value = Math.max(currentPage.value - 1, 1);
-};
-
 const computeStartItem = () => (currentPage.value - 1) * pageSize.value + 1;
 const startItem = computed(computeStartItem);
 
@@ -325,6 +288,10 @@ const computeEndItem = () => {
 const endItem = computed(computeEndItem);
 const totalItems = computed(() => apiData.value?.meta?.totalCount || 0);
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
+
+const handleUpdateCurrentPage = (newCurrentPage: number) => {
+  currentPage.value = newCurrentPage;
+};
 
 const navigateToCustomer = async (customerId: string) => {
   await navigateTo(`/customers/${customerId}`);
