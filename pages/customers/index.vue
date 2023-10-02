@@ -233,8 +233,7 @@
 </template>
 
 <script setup lang="ts">
-import { format } from 'date-fns';
-import { formatPhoneNumber } from '~/utils';
+import { formatPhoneNumber, formatDate } from '~/utils';
 import * as yup from 'yup';
 
 import { useDebounceFn } from '@vueuse/core';
@@ -246,8 +245,6 @@ import {
   ListboxOptions,
 } from '@headlessui/vue';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid';
-
-const baseUrl = useRuntimeConfig().public.baseURL;
 
 const searchBy = [
   { id: 1, name: 'Phone number', value: 'phoneNumber' },
@@ -265,7 +262,7 @@ const search = ref('');
 const selectedDates = ref([]);
 
 const buildUrl = () => {
-  let url = `${baseUrl}/customers?page=${currentPage.value}&size=${pageSize.value}&sortBy=updated_at&order=desc`;
+  let url = `/customers?page=${currentPage.value}&size=${pageSize.value}&sortBy=updated_at&order=desc`;
   if (search.value) {
     url += `&${selected.value.value}=${search.value}`;
   }
@@ -298,10 +295,6 @@ const onSubmit = () => {
   fetchData();
 };
 const debounceOnSubmit = useDebounceFn(onSubmit, 500);
-
-function formatDate(dateString: string) {
-  return format(new Date(dateString), 'MMMM d, yyyy');
-}
 
 function createFullName(first_name: string, last_name: string) {
   return `${first_name} ${last_name}`;

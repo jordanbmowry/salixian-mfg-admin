@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 export function formatMoney(number: number) {
   if (typeof number !== 'number') return;
   let money = number.toFixed(2);
@@ -20,4 +22,8 @@ export function formatPhoneNumber(phoneNumber: string) {
   }
 
   return null;
+}
+
+export function formatDate(dateString: string) {
+  return format(new Date(dateString), 'MMMM d, yyyy');
 }

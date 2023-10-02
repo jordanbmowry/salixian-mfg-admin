@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatMoney } from '~/utils';
+import { formatMoney, formatDate } from '~/utils';
 import { format } from 'date-fns';
 
 const baseUrl = useRuntimeConfig().public.baseURL;
@@ -51,12 +51,8 @@ watch(selectedDates, () => {
 const formattedNumberOfCustomers = computed(() => {
   return numberOfCustomers.value?.toLocaleString();
 });
-const formattedStartDate = computed(() =>
-  format(new Date(selectedDates.value[0]), 'MMMM d, yyyy')
-);
-const formattedEndDate = computed(() =>
-  format(new Date(selectedDates.value[1]), 'MMMM d, yyyy')
-);
+const formattedStartDate = computed(() => formatDate(selectedDates.value[0]));
+const formattedEndDate = computed(() => formatDate(selectedDates.value[1]));
 
 const formattedNumberOfOrders = computed(() =>
   numberOfOrders.value?.toLocaleString()
