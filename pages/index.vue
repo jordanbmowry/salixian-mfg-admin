@@ -92,43 +92,46 @@ const stats = ref([
 <template>
   <div>
     <h1 class="font-semibold leading-6 text-4xl pb-10">Dashboard</h1>
-    <DatePicker type="date" v-model="selectedDates" range />
+    <div v-if="orderStatusData">
+      <DatePicker type="date" v-model="selectedDates" range />
 
-    <h2 class="text-3xl font-semibold leading-6 text-gray-900 pt-10 pb-6">
-      Stats:
-      <span class="text-xl"
-        >{{ formattedStartDate }} - {{ formattedEndDate }}</span
-      >
-    </h2>
+      <h2 class="text-3xl font-semibold leading-6 text-gray-900 pt-10 pb-6">
+        Stats:
+        <span class="text-xl"
+          >{{ formattedStartDate }} - {{ formattedEndDate }}</span
+        >
+      </h2>
 
-    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      <div
-        v-for="item in stats"
-        :key="item.id"
-        class="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6"
-      >
-        <dt>
-          <div class="absolute rounded-md bg-stone-500 p-3">
-            <Icon class="text-white" :name="item.icon" />
-          </div>
-          <p class="ml-16 truncate text-sm font-medium text-gray-500">
-            {{ item.name }}
-          </p>
-        </dt>
-        <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
-          <p class="text-2xl font-semibold text-gray-900">{{ item.stat }}</p>
-        </dd>
+      <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          v-for="item in stats"
+          :key="item.id"
+          class="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6"
+        >
+          <dt>
+            <div class="absolute rounded-md bg-stone-500 p-3">
+              <Icon class="text-white" :name="item.icon" />
+            </div>
+            <p class="ml-16 truncate text-sm font-medium text-gray-500">
+              {{ item.name }}
+            </p>
+          </dt>
+          <dd class="ml-16 flex items-baseline pb-6 sm:pb-7">
+            <p class="text-2xl font-semibold text-gray-900">{{ item.stat }}</p>
+          </dd>
+        </div>
+      </dl>
+      <div class="flex flex-col gap-10 mt-10">
+        <MonthlyRevenueChart
+          v-if="monthlyRevenueData"
+          :monthlyRevenueData="monthlyRevenueData"
+        />
+        <OrderStatusDistributionChart
+          v-if="orderStatusData"
+          :orderStatusDistributionData="orderStatusData"
+        />
       </div>
-    </dl>
-    <div class="flex flex-col gap-10 mt-10">
-      <MonthlyRevenueChart
-        v-if="monthlyRevenueData"
-        :monthlyRevenueData="monthlyRevenueData"
-      />
-      <OrderStatusDistributionChart
-        v-if="orderStatusData"
-        :orderStatusDistributionData="orderStatusData"
-      />
     </div>
+    <TableLoader v-else />
   </div>
 </template>
