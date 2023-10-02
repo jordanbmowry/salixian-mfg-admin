@@ -280,9 +280,7 @@ const url = computed(buildUrl);
 
 const fetchData = async () => {
   try {
-    const { data } = await useFetch(url.value, {
-      credentials: 'include',
-    });
+    const data = await useFetchWithCache(url.value);
     apiData.value = data.value;
   } catch (error) {
     console.error('Error fetching the data: ', error);
