@@ -1,22 +1,19 @@
 <template>
   <div v-if="apiData.data" class="px-4 sm:px-6 lg:px-8">
-    <div class="md:flex md:justify-between">
+    <div class="md:flex md:justify-between gap-4">
       <DatePicker
-        class="max-w-sm self-end"
+        class="max-w-sm self-end mx-auto 2xl:mx-0"
         type="date"
         v-model="selectedDates"
         range
       />
-      <form @submit="debounceOnSubmit">
-        <div class="flex">
-          <Listbox as="div" v-model="selected">
-            <ListboxLabel
-              class="block text-sm font-medium leading-6 text-gray-900"
-              >Search by</ListboxLabel
-            >
-            <div class="relative mt-2">
+
+      <form class="grow" @submit="debounceOnSubmit">
+        <div class="flex flex-col items-center">
+          <Listbox as="div" v-model="selected" class="w-full">
+            <div class="relative">
               <ListboxButton
-                class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 text-xs sm:text-sm"
               >
                 <span class="block truncate">{{ selected.name }}</span>
                 <span
@@ -73,9 +70,9 @@
               </transition>
             </div>
           </Listbox>
-          <div class="w-full max-w-lg lg:max-w-xs self-end">
+          <div class="w-full">
             <label for="search" class="sr-only">Search</label>
-            <div class="relative">
+            <div class="relative w-full self-end">
               <div
                 class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
               >
@@ -98,7 +95,7 @@
         </div>
       </form>
 
-      <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <div class="mt-4 sm:mt-0 sm:flex-none">
         <NuxtLink
           to="/customers/create"
           type="submit"
@@ -268,7 +265,7 @@ const search = ref('');
 const selectedDates = ref([]);
 
 const buildUrl = () => {
-  let url = `${baseUrl}/customers?page=${currentPage.value}&size=${pageSize.value}`;
+  let url = `${baseUrl}/customers?page=${currentPage.value}&size=${pageSize.value}&sortBy=updated_at&order=desc`;
   if (search.value) {
     url += `&${selected.value.value}=${search.value}`;
   }
@@ -294,7 +291,7 @@ const fetchData = async () => {
 
 watch(url, fetchData, { immediate: true });
 
-watch(selected, () => {
+watch([selected, selectedDates], () => {
   search.value = '';
   currentPage.value = 1;
 });
