@@ -1,6 +1,12 @@
 <template>
   <div v-if="apiData.data" class="px-4 sm:px-6 lg:px-8">
-    <div class="sm:flex sm:justify-between sm:items-center">
+    <div class="md:flex md:justify-between">
+      <DatePicker
+        class="max-w-sm self-end"
+        type="date"
+        v-model="selectedDates"
+        range
+      />
       <form @submit="debounceOnSubmit">
         <div class="flex">
           <Listbox as="div" v-model="selected">
@@ -91,6 +97,7 @@
           </div>
         </div>
       </form>
+
       <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
         <NuxtLink
           to="/customers/create"
@@ -258,12 +265,19 @@ const apiData = ref({});
 const currentPage = ref(1);
 const pageSize = ref(10);
 const search = ref('');
+const selectedDates = ref([]);
 
 const buildUrl = () => {
+  let url = `${baseUrl}/customers?page=${currentPage.value}&size=${pageSize.value}`;
   if (search.value) {
-    return `${baseUrl}/customers?page=${currentPage.value}&size=${pageSize.value}&${selected.value.value}=${search.value}`;
+    url += `&${selected.value.value}=${search.value}`;
   }
-  return `${baseUrl}/customers?page=${currentPage.value}&size=${pageSize.value}`;
+
+  if (selectedDates.value?.length) {
+    url += `&startDate=${selectedDates.value[0]}&endDate=${selectedDates.value[0]}`;
+  }
+
+  return url;
 };
 const url = computed(buildUrl);
 
@@ -332,6 +346,6 @@ const navigateToCustomer = async (customerId: string) => {
 <style scoped>
 tr.cursor-pointer:hover {
   transform: scale(1.01);
-  transition: all 0.3s;
+  transition: all 0.6s;
 }
 </style>

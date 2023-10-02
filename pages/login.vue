@@ -40,7 +40,7 @@ const onSubmit = handleSubmit(async (formData) => {
         },
       }
     );
-    console.log('error', error);
+
     //@ts-ignore
     const userData: User = data.value?.data;
 

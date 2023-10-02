@@ -34,7 +34,6 @@ onMounted(() => {
     computedRows.value;
   });
 });
-console.log(computedRows.value);
 </script>
 
 <style>
