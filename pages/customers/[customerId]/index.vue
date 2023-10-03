@@ -17,6 +17,7 @@ const customerData = ref({});
 const orderData = ref([]);
 const paginationData = ref<PaginationData | {}>({});
 const isMoreOrdersLoading = ref(false);
+const isErrorShowing = ref(false);
 
 const buildUrl = () =>
   `/customers/${customerId}/orders?page=${currentPage.value}&pageSize=${pageSize.value}&sortBy=updated_at&order=desc`;
@@ -34,6 +35,7 @@ const fetchAllData = async () => {
     // @ts-ignore
     orderData.value = data.value.data?.orders;
   } catch (error) {
+    isErrorShowing.value = true;
     console.error('Error fetching the data: ', error);
   } finally {
     pageIsLoading.value = false;
@@ -49,6 +51,7 @@ const fetchOrderData = async () => {
     // @ts-ignore
     orderData.value = data.value.data?.orders;
   } catch (error) {
+    isErrorShowing.value = true;
     console.error('Error fetching the data: ', error);
   } finally {
     isMoreOrdersLoading.value = false;
@@ -77,9 +80,49 @@ const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
 const handleUpdateCurrentPage = (newCurrentPage: number) => {
   currentPage.value = newCurrentPage;
 };
+
+const statusClass = (status: string) => {
+  switch (status) {
+    case 'pending':
+      return 'bg-yellow-300 text-yellow-800 px-2 py-1 rounded';
+    case 'in progress':
+      return 'bg-blue-300 text-blue-800 px-2 py-1 rounded';
+    case 'complete':
+      return 'bg-green-300 text-green-800 px-2 py-1 rounded';
+    case 'canceled':
+      return 'bg-red-300 text-red-800 px-2 py-1 rounded';
+    default:
+      return '';
+  }
+};
+
+const paymentStatusClass = (status: string) => {
+  switch (status) {
+    case 'not paid':
+      return 'bg-red-200 text-red-800 px-2 py-1 rounded';
+    case 'partially paid':
+      return 'bg-yellow-200 text-yellow-800 px-2 py-1 rounded';
+    case 'fully paid':
+      return 'bg-green-200 text-green-800 px-2 py-1 rounded';
+    default:
+      return '';
+  }
+};
+
+const handleDismiss = (something) => {
+  console.log(something);
+};
 </script>
 
 <template>
+  <NotificationToast
+    type="error"
+    :isVisible="isErrorShowing"
+    :dismissible="true"
+    @dismiss="() => (isErrorShowing = false)"
+    message="Failed to fetch data."
+  />
+
   <TableLoader v-if="pageIsLoading" />
   <main v-else>
     <div class="my-4 sm:ml-16 sm:mt-0 sm:flex-none flex justify-end">
@@ -215,7 +258,79 @@ const handleUpdateCurrentPage = (newCurrentPage: number) => {
       >
         Customer orders
       </h2>
-      <table class="mt-6 w-full whitespace-nowrap text-left">
+      <!-- Mobile view -->
+      <div class="lg:hidden px-4 py-6">
+        <div
+          v-for="order in orderData"
+          :key="order.order_id"
+          class="border rounded-lg my-4 p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+        >
+          <!-- Order Description -->
+          <div class="mb-4">
+            <h3 class="text-base font-medium text-gray-800 mb-2">
+              Order Description
+            </h3>
+            <p class="text-sm text-gray-600">
+              {{ order.order_description }}
+            </p>
+          </div>
+
+          <!-- Order Status -->
+          <div class="mb-4">
+            <h4 class="text-base font-medium text-gray-700 mb-2">
+              Order Status
+            </h4>
+            <span
+              :class="statusClass(order.order_status)"
+              class="text-xs py-1 px-2 rounded-full"
+            >
+              {{ order.order_status }}
+            </span>
+          </div>
+
+          <!-- Payment Status -->
+          <div class="mb-4">
+            <h4 class="text-md font-semibold text-gray-700 mb-2">
+              Payment Status
+            </h4>
+            <span
+              :class="paymentStatusClass(order.payment_status)"
+              class="text-sm py-1 px-2 rounded-full"
+            >
+              {{ order.payment_status }}
+            </span>
+          </div>
+
+          <!-- Customer Cost -->
+          <div class="mb-4">
+            <h4 class="text-base font-medium text-gray-700 mb-2">
+              Customer Cost
+            </h4>
+            <p class="text-sm text-gray-600">${{ order.customer_cost }}</p>
+          </div>
+
+          <!-- Updated -->
+          <div class="mb-4">
+            <h4 class="text-base font-medium text-gray-700 mb-2">Updated</h4>
+            <p class="text-sm text-gray-600">
+              {{ formatDate(order.updated_at) }}
+            </p>
+          </div>
+
+          <!-- Edit Button -->
+          <div class="mt-4">
+            <NuxtLink
+              :to="`/orders/${order.order_id}/edit`"
+              class="text-sm font-semibold leading-6 text-white bg-stone-600 px-3 py-1.5 rounded-md shadow-sm hover:bg-stone-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-stone-600"
+            >
+              Edit
+            </NuxtLink>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop View -->
+      <table class="hidden lg:table w-full mt-6">
         <colgroup>
           <col class="w-full sm:w-4/12" />
           <col class="lg:w-4/12" />
@@ -225,12 +340,6 @@ const handleUpdateCurrentPage = (newCurrentPage: number) => {
         </colgroup>
         <thead class="border-b border-gray-200 text-sm leading-6 text-gray-900">
           <tr>
-            <th
-              scope="col"
-              class="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8"
-            >
-              Order date
-            </th>
             <th
               scope="col"
               class="hidden py-2 pl-0 pr-8 font-semibold sm:table-cell"
@@ -255,62 +364,76 @@ const handleUpdateCurrentPage = (newCurrentPage: number) => {
             >
               Customer cost
             </th>
+            <th
+              scope="col"
+              class="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8"
+            >
+              Updated
+            </th>
           </tr>
         </thead>
-        <tbody v-if="orderData" class="divide-y divide-white/5">
-          <tr v-for="order in orderData" :key="order.order_id">
-            <td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
-              <div class="flex items-center gap-x-4">
-                <div
-                  class="truncate text-sm font-medium leading-6 text-gray-900"
-                >
-                  {{ order.order_date }}
-                </div>
-              </div>
-            </td>
-            <td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
+        <tbody v-if="orderData" class="divide-y divide-stone-800/5 bg-gray-50">
+          <tr
+            v-for="order in orderData"
+            :key="order.order_id"
+            @click="async () => await navigateTo(`/orders/${order.order_id}`)"
+            class="cursor-pointer"
+          >
+            <td class="hidden py-4 px-4 sm:table-cell sm:pr-8">
               <div class="flex gap-x-3">
                 <div class="font-mono text-sm leading-6 text-gray-900">
                   {{
                     useTruncate(order.order_description, {
-                      length: 50,
+                      length: 30,
                       omission: '...',
                     })
                   }}
                 </div>
               </div>
             </td>
-            <td class="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
+            <td class="py-4 px-4 text-sm leading-6 sm:pr-8 lg:pr-20">
               <div
                 class="flex items-center justify-end gap-x-2 sm:justify-start"
               >
                 <div class="hidden text-gray-900 sm:block">
                   <span
-                    class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-400/20"
-                    :class="{
-                      'bg-yellow-300 text-yellow-800':
-                        order.order_status === 'pending',
-                      'bg-blue-300 text-blue-800':
-                        order.order_status === 'in progress',
-                      'bg-green-300 text-green-800':
-                        order.order_status === 'complete',
-                      'bg-red-300 text-red-800':
-                        order.order_status === 'canceled',
-                    }"
-                    >{{ order.order_status }}</span
+                    :class="statusClass(order.order_status)"
+                    class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-400/20 rounded-md"
                   >
+                    {{ order.order_status }}
+                  </span>
                 </div>
               </div>
             </td>
-            <td
-              class="hidden py-4 pl-0 pr-8 text-sm leading-6 text-gray-900 md:table-cell lg:pr-20"
-            >
-              {{ order.payment_status }}
+            <td class="py-4 px-4 text-sm leading-6">
+              <span
+                :class="paymentStatusClass(order.payment_status)"
+                class="py-1 px-3 text-xs font-medium text-gray-900 rounded-md"
+              >
+                {{ order.payment_status }}
+              </span>
             </td>
+
             <td
-              class="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-gray-900 sm:table-cell sm:pr-6 lg:pr-8"
+              class="hidden py-4 px-4 text-right text-sm leading-6 text-gray-900 sm:table-cell sm:pr-6 lg:pr-8"
             >
               {{ order.customer_cost }}
+            </td>
+            <td class="py-4 px-4 sm:pl-6 lg:pl-8">
+              <div class="flex items-center gap-x-4">
+                <div
+                  class="truncate text-sm font-medium leading-6 text-gray-900"
+                >
+                  {{ formatDate(order.updated_at) }}
+                </div>
+                <NuxtLink
+                  :to="`/orders/${order.order_id}/edit`"
+                  class="text-stone-600 hover:text-stone-900 text-sm"
+                  >Edit<span class="sr-only"
+                    >, {{ order.order_id }}</span
+                  ></NuxtLink
+                >
+              </div>
             </td>
           </tr>
         </tbody>
@@ -332,3 +455,10 @@ const handleUpdateCurrentPage = (newCurrentPage: number) => {
     </section>
   </main>
 </template>
+
+<style scoped>
+tr.cursor-pointer:hover {
+  transform: scale(1.01);
+  transition: all 0.6s;
+}
+</style>
