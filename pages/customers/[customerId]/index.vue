@@ -108,10 +108,6 @@ const paymentStatusClass = (status: string) => {
       return '';
   }
 };
-
-const handleDismiss = (something) => {
-  console.log(something);
-};
 </script>
 
 <template>
