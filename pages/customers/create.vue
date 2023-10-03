@@ -376,10 +376,27 @@ const validations = yup.object({
   billing_city: yup.string(),
   billing_state: yup
     .string()
-    .matches(/^[A-Z]{2}$/, 'Billing state must be two capital letters.'),
+    .nullable()
+    .test(
+      'billing-state-format',
+      'Billing state must be two capital letters or left blank.',
+      (value) => {
+        if (!value || value === '') return true;
+        return /^[A-Z]{2}$/.test(value);
+      }
+    ),
+
   billing_zip: yup
     .string()
-    .matches(/^\d{5}$/, 'Billing ZIP code must be exactly 5 digits.'),
+    .nullable()
+    .test(
+      'billing-zip-format',
+      'Billing ZIP code must be exactly 5 digits or left blank.',
+      (value) => {
+        if (!value || value === '') return true;
+        return /^\d{5}$/.test(value);
+      }
+    ),
   notes: yup.string(),
 });
 
