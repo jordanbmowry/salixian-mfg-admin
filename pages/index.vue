@@ -13,37 +13,44 @@ const selectedDates = ref<string[]>([
 ]);
 const monthlyRevenueData = ref<{ months: number[]; revenues: number[] }>();
 const orderStatusData = ref<{ counts: number[]; statuses: string[] }>();
+const isErrorShowing = ref(false);
+const isLoading = ref(false);
 
 const fetchData = async (url: string) => {
-  sessionStorage.clear();
-  const { data } = await useFetch(url, {
-    credentials: 'include',
-  });
-  // @ts-ignore
-  const {
-    revenue,
-    orderCount,
-    customerCount,
-    monthlyRevenue,
-    orderStatusDistribution,
-  } = data.value?.data;
-  numberOfCustomers.value = customerCount;
-  numberOfOrders.value = orderCount;
-  totalRevenue.value = revenue;
-  monthlyRevenueData.value = monthlyRevenue;
-  orderStatusData.value = orderStatusDistribution;
+  try {
+    isLoading.value = true;
+    const data = await useFetchWithCache(url);
+    // @ts-ignore
+    const {
+      revenue,
+      orderCount,
+      customerCount,
+      monthlyRevenue,
+      orderStatusDistribution,
+    } = data.value?.data;
+    numberOfCustomers.value = customerCount;
+    numberOfOrders.value = orderCount;
+    totalRevenue.value = revenue;
+    monthlyRevenueData.value = monthlyRevenue;
+    orderStatusData.value = orderStatusDistribution;
+  } catch (error) {
+    isErrorShowing.value = true;
+    console.error('Error fetching the data: ', error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 onMounted(() => {
   fetchData(
-    `${baseUrl}/stats?startDate=${selectedDates.value[0]}&endDate=${selectedDates.value[1]}`
+    `/stats?startDate=${selectedDates.value[0]}&endDate=${selectedDates.value[1]}`
   );
 });
 
 watch(selectedDates, () => {
   if (selectedDates.value.length === 2) {
     fetchData(
-      `${baseUrl}/stats?startDate=${selectedDates.value[0]}&endDate=${selectedDates.value[1]}`
+      `/stats?startDate=${selectedDates.value[0]}&endDate=${selectedDates.value[1]}`
     );
   }
 });
@@ -86,9 +93,17 @@ const stats = ref([
 </script>
 
 <template>
+  <NotificationToast
+    type="error"
+    :isVisible="isErrorShowing"
+    :dismissible="true"
+    @dismiss="() => (isErrorShowing = false)"
+    message="Failed to fetch data."
+  />
   <div>
     <h1 class="font-semibold leading-6 text-4xl pb-10">Dashboard</h1>
-    <div v-if="orderStatusData">
+    <TableLoader v-if="isLoading" />
+    <div v-else>
       <DatePicker type="date" v-model="selectedDates" range />
 
       <h2 class="text-3xl font-semibold leading-6 text-gray-900 pt-10 pb-6">
@@ -128,6 +143,5 @@ const stats = ref([
         />
       </div>
     </div>
-    <TableLoader v-else />
   </div>
 </template>
