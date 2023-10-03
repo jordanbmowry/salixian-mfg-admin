@@ -1,5 +1,13 @@
 <template>
-  <div class="space-y-10 divide-y divide-gray-900/10">
+  <div v-auto-animate class="space-y-10 divide-y divide-gray-900/10">
+    <NotificationToast
+      type="error"
+      :isVisible="isErrorShowing"
+      :dismissible="true"
+      @dismiss="() => (isErrorShowing = false)"
+      :message="errorMessage"
+    />
+    <Loader v-if="isSubmitting" />
     <div class="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
       <div class="px-4 sm:px-0">
         <h2 class="text-base font-semibold leading-7 text-gray-900">
@@ -11,6 +19,7 @@
       </div>
 
       <form
+        @submit="onSubmit"
         class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2"
       >
         <div class="px-4 py-6 sm:p-8">
@@ -348,6 +357,12 @@
 import * as yup from 'yup';
 import { useField, useForm } from 'vee-validate';
 
+const isSubmitting = ref(false);
+const isErrorShowing = ref(false);
+const errorMessage = ref('');
+
+const baseUrl = useRuntimeConfig().public.baseURL;
+
 const validations = yup.object({
   first_name: yup.string().required('First name is required.'),
   last_name: yup.string().required('Last name is required.'),
@@ -473,5 +488,32 @@ const { value: billing_zip, errorMessage: billingZipError } = useField(
 );
 const { value: notes, errorMessage: notesError } = useField('notes', {
   initialValue: '',
+});
+
+const onSubmit = handleSubmit(async (formData) => {
+  try {
+    isSubmitting.value = true;
+    const { error } = await useFetch(`${baseUrl}/customers`, {
+      method: 'POST',
+      body: {
+        data: formData,
+      },
+      credentials: 'include',
+      headers: useRequestHeaders(['cookie']),
+    });
+
+    if (error.value) {
+      errorMessage.value = error.value?.data?.error;
+      // @ts-ignore
+      throw new Error(error.value?.data?.error);
+    }
+    sessionStorage.clear();
+    await navigateTo('/customers');
+  } catch (err) {
+    console.error(err);
+    isErrorShowing.value = true;
+  } finally {
+    isSubmitting.value = false;
+  }
 });
 </script>
