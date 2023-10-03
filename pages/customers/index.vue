@@ -208,13 +208,11 @@
 
 <script setup lang="ts">
 import { formatPhoneNumber, formatDate } from '~/utils';
-import * as yup from 'yup';
 
 import { useDebounceFn } from '@vueuse/core';
 import {
   Listbox,
   ListboxButton,
-  ListboxLabel,
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/vue';
