@@ -19,7 +19,7 @@ const validations = yup.object({
   password: yup.string().required(),
 });
 
-const { handleSubmit, errors } = useForm({
+const { handleSubmit } = useForm({
   validationSchema: validations,
 });
 
