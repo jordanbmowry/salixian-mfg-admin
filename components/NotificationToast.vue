@@ -24,7 +24,12 @@
             </div>
           </div>
           <div v-if="dismissible">
-            <button type="button" :class="buttonClass" @click="dismissToast">
+            <button
+              class="cursor-pointer"
+              type="button"
+              :class="buttonClass"
+              @click="dismissToast"
+            >
               Dismiss
             </button>
           </div>
