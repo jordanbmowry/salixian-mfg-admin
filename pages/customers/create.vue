@@ -36,6 +36,7 @@
               /></label>
               <div v-auto-animate class="mt-2">
                 <input
+                  autofocus
                   v-model.trim="first_name"
                   type="text"
                   name="first-name"
@@ -106,6 +107,7 @@
               <div v-auto-animate class="mt-2">
                 <input
                   v-model.trim="email"
+                  placeholder="example@email.com"
                   id="email"
                   name="email"
                   type="email"
@@ -144,7 +146,7 @@
               </div>
             </div>
 
-            <div class="sm:col-span-2 sm:col-start-1">
+            <div class="sm:col-span-full xl:sm:col-span-2 xl:sm:col-start-1">
               <label
                 for="shipping-city"
                 class="block text-sm font-medium leading-6 text-gray-900"
@@ -170,33 +172,89 @@
               </div>
             </div>
 
-            <div class="sm:col-span-2">
-              <label
-                for="shipping-region"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >Shipping State / Province<font-awesome-icon
-                  class="text-red-500 ml-2"
-                  :icon="['fas', 'asterisk']"
-              /></label>
-              <div v-auto-animate class="mt-2">
-                <input
-                  v-model.trim="shipping_state"
-                  type="text"
-                  name="shipping-region"
-                  id="shipping-region"
-                  autocomplete="address-level1"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                />
-                <p
-                  class="text-red-600 text-sm m-0 p-0"
-                  v-if="shippingStateError"
+            <div v-auto-animate class="sm:col-span-full xl:sm:col-span-2">
+              <Listbox as="div" v-model="selectedShippingState">
+                <label
+                  for="shipping-state"
+                  class="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  {{ shippingStateError }}
-                </p>
-              </div>
+                  Shipping State / Province
+                  <font-awesome-icon
+                    class="text-red-500 ml-2"
+                    :icon="['fas', 'asterisk']"
+                  />
+                </label>
+                <div class="relative">
+                  <ListboxButton
+                    class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  >
+                    <span class="block truncate">{{
+                      selectedShippingState.name
+                    }}</span>
+                    <span
+                      class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+                    >
+                      <ChevronUpDownIcon
+                        class="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </ListboxButton>
+                  <p
+                    class="text-red-600 text-sm m-0 p-0"
+                    v-if="shippingStateError"
+                  >
+                    {{ shippingStateError }}
+                  </p>
+                  <transition
+                    leave-active-class="transition ease-in duration-100"
+                    leave-from-class="opacity-100"
+                    leave-to-class="opacity-0"
+                  >
+                    <ListboxOptions
+                      class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                    >
+                      <ListboxOption
+                        as="template"
+                        v-for="state in states"
+                        :key="state.value"
+                        :value="state"
+                        v-slot="{ active, selected }"
+                      >
+                        <li
+                          :class="[
+                            active
+                              ? 'bg-stone-600 text-white'
+                              : 'text-gray-900',
+                            'relative cursor-default select-none py-2 pl-3 pr-9',
+                          ]"
+                        >
+                          <span
+                            :class="[
+                              selected ? 'font-semibold' : 'font-normal',
+                              'block truncate',
+                            ]"
+                            >{{ state.name }}</span
+                          >
+
+                          <span
+                            v-if="selected"
+                            :class="[
+                              active ? 'text-white' : 'text-stone-600',
+                              'absolute inset-y-0 right-0 flex items-center pr-4',
+                            ]"
+                          >
+                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        </li>
+                      </ListboxOption>
+                    </ListboxOptions>
+                  </transition>
+                </div>
+              </Listbox>
             </div>
 
-            <div class="sm:col-span-2">
+            <div class="sm:col-span-full xl:sm:col-span-2">
               <label
                 for="shipping-postal-code"
                 class="block text-sm font-medium leading-6 text-gray-900"
@@ -207,6 +265,7 @@
               <div v-auto-animate class="mt-2">
                 <input
                   v-model.trim="shipping_zip"
+                  placeholder="12345"
                   type="text"
                   name="shipping-postal-code"
                   id="shipping-postal-code"
@@ -218,6 +277,39 @@
                 </p>
               </div>
             </div>
+
+            <div class="col-span-full">
+              <SwitchGroup as="div" class="flex items-center justify-between">
+                <span class="flex flex-grow flex-col">
+                  <SwitchLabel
+                    as="span"
+                    class="text-sm font-medium leading-6 text-gray-900"
+                    passive
+                    >Shipping and billing address are the same</SwitchLabel
+                  >
+                  <SwitchDescription as="span" class="text-sm text-gray-500"
+                    >Use the shipping address also as the billing
+                    address.</SwitchDescription
+                  >
+                </span>
+                <Switch
+                  v-model="useShippingForBilling"
+                  :class="[
+                    useShippingForBilling ? 'bg-stone-600' : 'bg-gray-200',
+                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-stone-600 focus:ring-offset-2',
+                  ]"
+                >
+                  <span
+                    aria-hidden="true"
+                    :class="[
+                      useShippingForBilling ? 'translate-x-5' : 'translate-x-0',
+                      'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                    ]"
+                  />
+                </Switch>
+              </SwitchGroup>
+            </div>
+
             <div class="col-span-full">
               <label
                 for="billing-address"
@@ -242,7 +334,7 @@
               </div>
             </div>
 
-            <div class="sm:col-span-2 sm:col-start-1">
+            <div class="sm:col-span-full xl:sm:col-span-2 xl:sm:col-start-1">
               <label
                 for="billing-city"
                 class="block text-sm font-medium leading-6 text-gray-900"
@@ -263,31 +355,89 @@
               </div>
             </div>
 
-            <div class="sm:col-span-2">
-              <label
-                for="billing-region"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >Billing State / Province</label
-              >
-              <div v-auto-animate class="mt-2">
-                <input
-                  v-model.trim="billing_state"
-                  type="text"
-                  name="billing-region"
-                  id="billing-region"
-                  autocomplete="billing address-level1"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                />
-                <p
-                  class="text-red-600 text-sm m-0 p-0"
-                  v-if="billingStateError"
+            <div class="sm:col-span-full xl:sm:col-span-2">
+              <Listbox as="div" v-model="selectedBillingState">
+                <label
+                  for="shipping-state"
+                  class="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  {{ billingStateError }}
-                </p>
-              </div>
+                  Billing State / Province
+                  <font-awesome-icon
+                    class="text-red-500 ml-2"
+                    :icon="['fas', 'asterisk']"
+                  />
+                </label>
+                <div class="relative">
+                  <ListboxButton
+                    class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  >
+                    <span class="block truncate">{{
+                      selectedBillingState.name
+                    }}</span>
+                    <span
+                      class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+                    >
+                      <ChevronUpDownIcon
+                        class="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </ListboxButton>
+                  <p
+                    class="text-red-600 text-sm m-0 p-0"
+                    v-if="billingStateError"
+                  >
+                    {{ billingStateError }}
+                  </p>
+                  <transition
+                    leave-active-class="transition ease-in duration-100"
+                    leave-from-class="opacity-100"
+                    leave-to-class="opacity-0"
+                  >
+                    <ListboxOptions
+                      class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                    >
+                      <ListboxOption
+                        as="template"
+                        v-for="state in states"
+                        :key="state.value"
+                        :value="state"
+                        v-slot="{ active, selected }"
+                      >
+                        <li
+                          :class="[
+                            active
+                              ? 'bg-stone-600 text-white'
+                              : 'text-gray-900',
+                            'relative cursor-default select-none py-2 pl-3 pr-9',
+                          ]"
+                        >
+                          <span
+                            :class="[
+                              selected ? 'font-semibold' : 'font-normal',
+                              'block truncate',
+                            ]"
+                            >{{ state.name }}</span
+                          >
+
+                          <span
+                            v-if="selected"
+                            :class="[
+                              active ? 'text-white' : 'text-stone-600',
+                              'absolute inset-y-0 right-0 flex items-center pr-4',
+                            ]"
+                          >
+                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        </li>
+                      </ListboxOption>
+                    </ListboxOptions>
+                  </transition>
+                </div>
+              </Listbox>
             </div>
 
-            <div class="sm:col-span-2">
+            <div class="sm:col-span-full xl:sm:col-span-2">
               <label
                 for="billing-postal-code"
                 class="block text-sm font-medium leading-6 text-gray-900"
@@ -354,12 +504,78 @@
 </template>
 
 <script setup lang="ts">
+import {
+  Switch,
+  SwitchDescription,
+  SwitchGroup,
+  SwitchLabel,
+  Listbox,
+  ListboxButton,
+  ListboxLabel,
+  ListboxOption,
+  ListboxOptions,
+} from '@headlessui/vue';
 import * as yup from 'yup';
 import { useField, useForm } from 'vee-validate';
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid';
 
+const useShippingForBilling = ref(false);
 const isSubmitting = ref(false);
 const isErrorShowing = ref(false);
 const errorMessage = ref('');
+const states = ref([
+  { name: 'Select a state', value: '' },
+  { name: 'Alabama', value: 'AL' },
+  { name: 'Alaska', value: 'AK' },
+  { name: 'Arizona', value: 'AZ' },
+  { name: 'Arkansas', value: 'AR' },
+  { name: 'California', value: 'CA' },
+  { name: 'Colorado', value: 'CO' },
+  { name: 'Connecticut', value: 'CT' },
+  { name: 'Delaware', value: 'DE' },
+  { name: 'Florida', value: 'FL' },
+  { name: 'Georgia', value: 'GA' },
+  { name: 'Hawaii', value: 'HI' },
+  { name: 'Idaho', value: 'ID' },
+  { name: 'Illinois', value: 'IL' },
+  { name: 'Indiana', value: 'IN' },
+  { name: 'Iowa', value: 'IA' },
+  { name: 'Kansas', value: 'KS' },
+  { name: 'Kentucky', value: 'KY' },
+  { name: 'Louisiana', value: 'LA' },
+  { name: 'Maine', value: 'ME' },
+  { name: 'Maryland', value: 'MD' },
+  { name: 'Massachusetts', value: 'MA' },
+  { name: 'Michigan', value: 'MI' },
+  { name: 'Minnesota', value: 'MN' },
+  { name: 'Mississippi', value: 'MS' },
+  { name: 'Missouri', value: 'MO' },
+  { name: 'Montana', value: 'MT' },
+  { name: 'Nebraska', value: 'NE' },
+  { name: 'Nevada', value: 'NV' },
+  { name: 'New Hampshire', value: 'NH' },
+  { name: 'New Jersey', value: 'NJ' },
+  { name: 'New Mexico', value: 'NM' },
+  { name: 'New York', value: 'NY' },
+  { name: 'North Carolina', value: 'NC' },
+  { name: 'North Dakota', value: 'ND' },
+  { name: 'Ohio', value: 'OH' },
+  { name: 'Oklahoma', value: 'OK' },
+  { name: 'Oregon', value: 'OR' },
+  { name: 'Pennsylvania', value: 'PA' },
+  { name: 'Rhode Island', value: 'RI' },
+  { name: 'South Carolina', value: 'SC' },
+  { name: 'South Dakota', value: 'SD' },
+  { name: 'Tennessee', value: 'TN' },
+  { name: 'Texas', value: 'TX' },
+  { name: 'Utah', value: 'UT' },
+  { name: 'Vermont', value: 'VT' },
+  { name: 'Virginia', value: 'VA' },
+  { name: 'Washington', value: 'WA' },
+  { name: 'West Virginia', value: 'WV' },
+  { name: 'Wisconsin', value: 'WI' },
+  { name: 'Wyoming', value: 'WY' },
+]);
 
 const baseUrl = useRuntimeConfig().public.baseURL;
 
@@ -476,6 +692,13 @@ const { value: notes, errorMessage: notesError } = useField<string>('notes', {
   initialValue: '',
 });
 
+function findStateByValue(value: string) {
+  return states.value.find((s) => s.value === value) || states.value[0];
+}
+
+const selectedShippingState = ref(findStateByValue(shipping_state.value));
+const selectedBillingState = ref(findStateByValue(billing_state.value));
+
 const onSubmit = handleSubmit(async (formData) => {
   try {
     isSubmitting.value = true;
@@ -519,4 +742,28 @@ watch(
   },
   { deep: true }
 );
+
+watch(useShippingForBilling, (newValue) => {
+  if (newValue) {
+    billing_address.value = shipping_address.value;
+    billing_city.value = shipping_city.value;
+    billing_state.value = shipping_state.value;
+    billing_zip.value = shipping_zip.value;
+    selectedBillingState.value = selectedShippingState.value;
+  } else {
+    selectedBillingState.value = { name: 'Select a state', value: '' };
+    billing_address.value = '';
+    billing_city.value = '';
+    billing_state.value = '';
+    billing_zip.value = '';
+  }
+});
+
+watch(selectedShippingState, (newState) => {
+  shipping_state.value = newState.value;
+});
+
+watch(selectedBillingState, (newState) => {
+  billing_state.value = newState.value;
+});
 </script>
