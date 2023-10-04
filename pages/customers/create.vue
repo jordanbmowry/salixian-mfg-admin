@@ -419,74 +419,60 @@ const { handleSubmit } = useForm({
   validationSchema: validations,
 });
 
-const { value: first_name, errorMessage: firstNameError } = useField(
+const { value: first_name, errorMessage: firstNameError } = useField<string>(
   'first_name',
   {
     initialValue: '',
   }
 );
-const { value: last_name, errorMessage: lastNameError } = useField(
+const { value: last_name, errorMessage: lastNameError } = useField<string>(
   'last_name',
   {
     initialValue: '',
   }
 );
-const { value: phone_number, errorMessage: phoneNumberError } = useField(
-  'phone_number',
-  {
+const { value: phone_number, errorMessage: phoneNumberError } =
+  useField<string>('phone_number', {
     initialValue: '',
-  }
-);
-const { value: email, errorMessage: emailError } = useField('email', {
+  });
+const { value: email, errorMessage: emailError } = useField<string>('email', {
   initialValue: '',
 });
 const { value: shipping_address, errorMessage: shippingAddressError } =
-  useField('shipping_address', {
+  useField<string>('shipping_address', {
     initialValue: '',
   });
-const { value: shipping_city, errorMessage: shippingCityError } = useField(
-  'shipping_city',
-  {
+const { value: shipping_city, errorMessage: shippingCityError } =
+  useField<string>('shipping_city', {
     initialValue: '',
-  }
-);
-const { value: shipping_state, errorMessage: shippingStateError } = useField(
-  'shipping_state',
-  {
+  });
+const { value: shipping_state, errorMessage: shippingStateError } =
+  useField<string>('shipping_state', {
     initialValue: '',
-  }
-);
-const { value: shipping_zip, errorMessage: shippingZipError } = useField(
-  'shipping_zip',
-  {
+  });
+const { value: shipping_zip, errorMessage: shippingZipError } =
+  useField<string>('shipping_zip', {
     initialValue: '',
-  }
-);
-const { value: billing_address, errorMessage: billingAddressError } = useField(
-  'billing_address',
-  {
+  });
+const { value: billing_address, errorMessage: billingAddressError } =
+  useField<string>('billing_address', {
     initialValue: '',
-  }
-);
-const { value: billing_city, errorMessage: billingCityError } = useField(
-  'billing_city',
-  {
+  });
+const { value: billing_city, errorMessage: billingCityError } =
+  useField<string>('billing_city', {
     initialValue: '',
-  }
-);
-const { value: billing_state, errorMessage: billingStateError } = useField(
-  'billing_state',
-  {
+  });
+const { value: billing_state, errorMessage: billingStateError } =
+  useField<string>('billing_state', {
     initialValue: '',
-  }
-);
-const { value: billing_zip, errorMessage: billingZipError } = useField(
+  });
+const { value: billing_zip, errorMessage: billingZipError } = useField<string>(
   'billing_zip',
   {
     initialValue: '',
   }
 );
-const { value: notes, errorMessage: notesError } = useField('notes', {
+const { value: notes, errorMessage: notesError } = useField<string>('notes', {
   initialValue: '',
 });
 
@@ -516,4 +502,21 @@ const onSubmit = handleSubmit(async (formData) => {
     isSubmitting.value = false;
   }
 });
+
+function formatToPhoneNumber(value: string) {
+  let cleaned = ('' + value).replace(/\D/g, '');
+  let match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+  if (match) {
+    return `${match[1]}-${match[2]}-${match[3]}`;
+  }
+  return value;
+}
+
+watch(
+  phone_number,
+  (newValue) => {
+    phone_number.value = formatToPhoneNumber(newValue);
+  },
+  { deep: true }
+);
 </script>
