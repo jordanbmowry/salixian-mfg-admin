@@ -11,8 +11,9 @@
       />
     </label>
     <Listbox as="div" v-model="selectedState">
-      <div class="relative" v-if="!isTogglerSelected">
+      <div class="relative">
         <ListboxButton
+          @click="focusHiddenInput"
           :id="inputId"
           class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
         >
@@ -35,9 +36,15 @@
           <ListboxOptions
             class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
           >
+            <input
+              v-model="searchQuery"
+              class="w-0 h-0 opacity-0 overflow-hidden absolute"
+              @input="onSearchInput"
+              ref="hiddenInput"
+            />
             <ListboxOption
               as="template"
-              v-for="state in states"
+              v-for="state in filteredStates"
               :key="state.value"
               :value="state"
               v-slot="{ active, selected }"
@@ -76,7 +83,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, watch } from 'vue';
+import { ref, defineProps, defineEmits, watch, computed, nextTick } from 'vue';
 import {
   Listbox,
   ListboxButton,
@@ -92,7 +99,7 @@ const props = defineProps({
   },
   modelValue: {
     type: String,
-    default: '', // <-- default value added
+    default: '',
   },
   error: String,
   states: {
@@ -101,7 +108,7 @@ const props = defineProps({
   },
 });
 
-const { label, modelValue, error, states } = toRefs(props);
+const { modelValue, states } = toRefs(props);
 const emit = defineEmits(['update:modelValue']);
 
 const inputId = `state-dropdown-${Math.random().toString(36).substr(2, 9)}`;
@@ -109,10 +116,26 @@ const defaultState = { name: '', value: '' };
 const selectedState = ref(
   states.value.find((s) => s.value === modelValue.value) || defaultState
 );
-const isTogglerSelected = ref(false);
+const searchQuery = ref('');
+const hiddenInput = ref(null);
+
+const filteredStates = computed(() => {
+  if (!searchQuery.value) return states.value;
+  return states.value.filter((state) =>
+    state.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
+
+const focusHiddenInput = () => {
+  nextTick(() => {
+    hiddenInput.value.focus();
+  });
+};
 
 const updateSelectedState = (newState) => {
-  emit('update:modelValue', newState);
+  selectedState.value = newState;
+  emit('update:modelValue', newState.value);
+  searchQuery.value = '';
 };
 
 watch(
