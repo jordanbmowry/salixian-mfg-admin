@@ -26,257 +26,99 @@
           <div
             class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"
           >
-            <div class="sm:col-span-3">
-              <label
-                for="first-name"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >First name<font-awesome-icon
-                  class="text-red-500 ml-2"
-                  :icon="['fas', 'asterisk']"
-              /></label>
-              <div v-auto-animate class="mt-2">
-                <input
-                  autofocus
-                  v-model.trim="first_name"
-                  type="text"
-                  name="first-name"
-                  id="first-name"
-                  autocomplete="given-name"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                />
-                <p class="text-red-600 text-sm m-0 p-0" v-if="firstNameError">
-                  {{ firstNameError }}
-                </p>
-              </div>
-            </div>
+            <InputField
+              class="sm:col-span-3"
+              required
+              label="First name"
+              v-model.trim="first_name"
+              type="text"
+              name="first-name"
+              id="first-name"
+              autocomplete="given-name"
+              :error="firstNameError"
+              autofocus
+            />
 
-            <div class="sm:col-span-3">
-              <label
-                for="last-name"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >Last name<font-awesome-icon
-                  class="text-red-500 ml-2"
-                  :icon="['fas', 'asterisk']"
-              /></label>
-              <div v-auto-animate class="mt-2">
-                <input
-                  v-model.trim="last_name"
-                  type="text"
-                  name="last-name"
-                  id="last-name"
-                  autocomplete="family-name"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                />
-                <p class="text-red-600 text-sm m-0 p-0" v-if="lastNameError">
-                  {{ lastNameError }}
-                </p>
-              </div>
-            </div>
+            <InputField
+              class="sm:col-span-3"
+              required
+              label="Last name"
+              v-model.trim="last_name"
+              type="text"
+              name="last-name"
+              id="last-name"
+              autocomplete="family-name"
+              :error="lastNameError"
+            />
 
-            <div class="sm:col-span-4">
-              <label
-                for="phone-number"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >Phone number<font-awesome-icon
-                  class="text-red-500 ml-2"
-                  :icon="['fas', 'asterisk']"
-              /></label>
-              <div v-auto-animate class="relative mt-2 rounded-md shadow-sm">
-                <input
-                  v-model.trim="phone_number"
-                  type="text"
-                  name="phone-number"
-                  id="phone-number"
-                  class="block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                  placeholder="999-999-9999"
-                />
-                <p class="text-red-600 text-sm m-0 p-0" v-if="phoneNumberError">
-                  {{ phoneNumberError }}
-                </p>
-              </div>
-            </div>
+            <InputField
+              class="sm:col-span-4"
+              required
+              label="Phone number"
+              v-model.trim="phone_number"
+              type="text"
+              name="phone-number"
+              id="phone-number"
+              autocomplete="true"
+              :error="phoneNumberError"
+            />
 
-            <div class="sm:col-span-4">
-              <label
-                for="email"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >Email address<font-awesome-icon
-                  class="text-red-500 ml-2"
-                  :icon="['fas', 'asterisk']"
-              /></label>
-              <div v-auto-animate class="mt-2">
-                <input
-                  v-model.trim="email"
-                  placeholder="example@email.com"
-                  id="email"
-                  name="email"
-                  type="email"
-                  autocomplete="email"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                />
-                <p class="text-red-600 text-sm m-0 p-0" v-if="emailError">
-                  {{ emailError }}
-                </p>
-              </div>
-            </div>
+            <InputField
+              class="sm:col-span-4"
+              required
+              label="Email"
+              v-model.trim="email"
+              type="text"
+              name="email"
+              id="email"
+              autocomplete="email"
+              :error="emailError"
+            />
 
-            <div class="col-span-full">
-              <label
-                for="shipping-address"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >Shipping address<font-awesome-icon
-                  class="text-red-500 ml-2"
-                  :icon="['fas', 'asterisk']"
-              /></label>
-              <div v-auto-animate class="mt-2">
-                <input
-                  v-model.trim="shipping_address"
-                  type="text"
-                  name="shipping-address"
-                  id="shipping-address"
-                  autocomplete="shipping street-address"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                />
-                <p
-                  class="text-red-600 text-sm m-0 p-0"
-                  v-if="shippingAddressError"
-                >
-                  {{ shippingAddressError }}
-                </p>
-              </div>
-            </div>
+            <InputField
+              class="sm:col-span-4"
+              required
+              label="Shipping address"
+              v-model.trim="shipping_address"
+              type="text"
+              name="shipping-address"
+              id="shipping-address"
+              autocomplete="shipping street-address"
+              :error="shippingAddressError"
+            />
 
-            <div class="sm:col-span-full xl:sm:col-span-2 xl:sm:col-start-1">
-              <label
-                for="shipping-city"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >Shipping City<font-awesome-icon
-                  class="text-red-500 ml-2"
-                  :icon="['fas', 'asterisk']"
-              /></label>
-              <div v-auto-animate class="mt-2">
-                <input
-                  v-model.trim="shipping_city"
-                  type="text"
-                  name="shipping-city"
-                  id="shipping-city"
-                  autocomplete="shipping address-level2"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                />
-                <p
-                  class="text-red-600 text-sm m-0 p-0"
-                  v-if="shippingCityError"
-                >
-                  {{ shippingCityError }}
-                </p>
-              </div>
-            </div>
+            <InputField
+              class="sm:col-span-full xl:sm:col-span-2 xl:sm:col-start-1"
+              required
+              label="Shipping City"
+              v-model.trim="shipping_city"
+              type="text"
+              name="shipping-city"
+              id="shipping-city"
+              autocomplete="shipping address-level2"
+              :error="shippingCityError"
+            />
 
-            <div v-auto-animate class="sm:col-span-full xl:sm:col-span-2">
-              <Listbox as="div" v-model="selectedShippingState">
-                <label
-                  for="shipping-state"
-                  class="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Shipping State / Province
-                  <font-awesome-icon
-                    class="text-red-500 ml-2"
-                    :icon="['fas', 'asterisk']"
-                  />
-                </label>
-                <div class="relative">
-                  <ListboxButton
-                    class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  >
-                    <span class="block truncate">{{
-                      selectedShippingState.name
-                    }}</span>
-                    <span
-                      class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
-                    >
-                      <ChevronUpDownIcon
-                        class="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </ListboxButton>
-                  <p
-                    class="text-red-600 text-sm m-0 p-0"
-                    v-if="shippingStateError"
-                  >
-                    {{ shippingStateError }}
-                  </p>
-                  <transition
-                    leave-active-class="transition ease-in duration-100"
-                    leave-from-class="opacity-100"
-                    leave-to-class="opacity-0"
-                  >
-                    <ListboxOptions
-                      class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-                    >
-                      <ListboxOption
-                        as="template"
-                        v-for="state in states"
-                        :key="state.value"
-                        :value="state"
-                        v-slot="{ active, selected }"
-                      >
-                        <li
-                          :class="[
-                            active
-                              ? 'bg-stone-600 text-white'
-                              : 'text-gray-900',
-                            'relative cursor-default select-none py-2 pl-3 pr-9',
-                          ]"
-                        >
-                          <span
-                            :class="[
-                              selected ? 'font-semibold' : 'font-normal',
-                              'block truncate',
-                            ]"
-                            >{{ state.name }}</span
-                          >
+            <StateDropdown
+              label="Shipping state"
+              class="sm:col-span-full xl:sm:col-span-2"
+              :modelValue="shipping_state"
+              :states="states"
+              @update:modelValue="updateShippingState"
+              :error="shippingStateError ?? ''"
+            />
 
-                          <span
-                            v-if="selected"
-                            :class="[
-                              active ? 'text-white' : 'text-stone-600',
-                              'absolute inset-y-0 right-0 flex items-center pr-4',
-                            ]"
-                          >
-                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                          </span>
-                        </li>
-                      </ListboxOption>
-                    </ListboxOptions>
-                  </transition>
-                </div>
-              </Listbox>
-            </div>
-
-            <div class="sm:col-span-full xl:sm:col-span-2">
-              <label
-                for="shipping-postal-code"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >Shipping ZIP / Postal code<font-awesome-icon
-                  class="text-red-500 ml-2"
-                  :icon="['fas', 'asterisk']"
-              /></label>
-              <div v-auto-animate class="mt-2">
-                <input
-                  v-model.trim="shipping_zip"
-                  placeholder="12345"
-                  type="text"
-                  name="shipping-postal-code"
-                  id="shipping-postal-code"
-                  autocomplete="shipping postal-code"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                />
-                <p class="text-red-600 text-sm m-0 p-0" v-if="shippingZipError">
-                  {{ shippingZipError }}
-                </p>
-              </div>
-            </div>
+            <InputField
+              class="sm:col-span-full xl:sm:col-span-2"
+              required
+              label="Shipping ZIP / Postal code"
+              v-model.trim="shipping_zip"
+              type="text"
+              name="shipping-postal-code"
+              id="shipping-postal-code"
+              autocomplete="shipping postal-code"
+              :error="shippingZipError"
+            />
 
             <div class="col-span-full">
               <SwitchGroup as="div" class="flex items-center justify-between">
@@ -310,176 +152,56 @@
               </SwitchGroup>
             </div>
 
-            <div class="col-span-full">
-              <label
-                for="billing-address"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >Billing address</label
-              >
-              <div v-auto-animate class="mt-2">
-                <input
-                  v-model.trim="billing_address"
-                  type="text"
-                  name="billing-address"
-                  id="billing-address"
-                  autocomplete="billing street-address"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                />
-                <p
-                  class="text-red-600 text-sm m-0 p-0"
-                  v-if="billingAddressError"
-                >
-                  {{ billingAddressError }}
-                </p>
-              </div>
-            </div>
+            <InputField
+              class="col-span-full"
+              label="Billing address"
+              v-model.trim="billing_address"
+              type="text"
+              name="billing-address"
+              id="billing-address"
+              autocomplete="billing street-address"
+              :error="billingAddressError"
+            />
 
-            <div class="sm:col-span-full xl:sm:col-span-2 xl:sm:col-start-1">
-              <label
-                for="billing-city"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >Billing City</label
-              >
-              <div v-auto-animate class="mt-2">
-                <input
-                  v-model.trim="billing_city"
-                  type="text"
-                  name="billing-city"
-                  id="billing-city"
-                  autocomplete="billing address-level2"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                />
-                <p class="text-red-600 text-sm m-0 p-0" v-if="billingCityError">
-                  {{ billingCityError }}
-                </p>
-              </div>
-            </div>
+            <InputField
+              class="sm:col-span-full xl:sm:col-span-2 xl:sm:col-start-1"
+              label="Billing City"
+              v-model.trim="billing_city"
+              type="text"
+              name="billing-city"
+              id="billing-city"
+              autocomplete="billing address-level2"
+              :error="billingCityError"
+            />
 
-            <div class="sm:col-span-full xl:sm:col-span-2">
-              <Listbox as="div" v-model="selectedBillingState">
-                <label
-                  for="shipping-state"
-                  class="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Billing State / Province
-                  <font-awesome-icon
-                    class="text-red-500 ml-2"
-                    :icon="['fas', 'asterisk']"
-                  />
-                </label>
-                <div class="relative">
-                  <ListboxButton
-                    class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  >
-                    <span class="block truncate">{{
-                      selectedBillingState.name
-                    }}</span>
-                    <span
-                      class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
-                    >
-                      <ChevronUpDownIcon
-                        class="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </ListboxButton>
-                  <p
-                    class="text-red-600 text-sm m-0 p-0"
-                    v-if="billingStateError"
-                  >
-                    {{ billingStateError }}
-                  </p>
-                  <transition
-                    leave-active-class="transition ease-in duration-100"
-                    leave-from-class="opacity-100"
-                    leave-to-class="opacity-0"
-                  >
-                    <ListboxOptions
-                      class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-                    >
-                      <ListboxOption
-                        as="template"
-                        v-for="state in states"
-                        :key="state.value"
-                        :value="state"
-                        v-slot="{ active, selected }"
-                      >
-                        <li
-                          :class="[
-                            active
-                              ? 'bg-stone-600 text-white'
-                              : 'text-gray-900',
-                            'relative cursor-default select-none py-2 pl-3 pr-9',
-                          ]"
-                        >
-                          <span
-                            :class="[
-                              selected ? 'font-semibold' : 'font-normal',
-                              'block truncate',
-                            ]"
-                            >{{ state.name }}</span
-                          >
+            <StateDropdown
+              label="Billing State"
+              class="sm:col-span-full xl:sm:col-span-2"
+              :modelValue="billing_state"
+              :states="states"
+              @update:modelValue="updateBillingState"
+              :error="billingStateError ?? ''"
+            />
 
-                          <span
-                            v-if="selected"
-                            :class="[
-                              active ? 'text-white' : 'text-stone-600',
-                              'absolute inset-y-0 right-0 flex items-center pr-4',
-                            ]"
-                          >
-                            <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                          </span>
-                        </li>
-                      </ListboxOption>
-                    </ListboxOptions>
-                  </transition>
-                </div>
-              </Listbox>
-            </div>
-
-            <div class="sm:col-span-full xl:sm:col-span-2">
-              <label
-                for="billing-postal-code"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >Billing ZIP / Postal code</label
-              >
-              <div v-auto-animate class="mt-2">
-                <input
-                  v-model.trim="billing_zip"
-                  type="text"
-                  name="billing-postal-code"
-                  id="billing-postal-code"
-                  autocomplete="billing postal-code"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                />
-                <p class="text-red-600 text-sm m-0 p-0" v-if="billingZipError">
-                  {{ billingZipError }}
-                </p>
-              </div>
-            </div>
-
-            <div class="col-span-full">
-              <label
-                for="notes"
-                class="block text-sm font-medium leading-6 text-gray-900"
-                >Notes</label
-              >
-              <div v-auto-animate class="mt-2">
-                <textarea
-                  @input="e => notes = (e.target as HTMLTextAreaElement).value.trim()"
-                  id="notes"
-                  name="notes"
-                  rows="3"
-                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
-                />
-                <p class="text-red-600 text-sm m-0 p-0" v-if="notesError">
-                  {{ notesError }}
-                </p>
-              </div>
-              <p class="mt-3 text-sm leading-6 text-gray-600">
-                Notes regarding the customer.
-              </p>
-            </div>
+            <InputField
+              class="sm:col-span-full xl:sm:col-span-2"
+              label="Billing Zip / Postal code"
+              v-model.trim="billing_zip"
+              type="text"
+              name="billing-postal-code"
+              id="billing-postal-code"
+              autocomplete="billing address-level2"
+              :error="billingZipError"
+            />
+            <TextAreaField
+              class="col-span-full"
+              label="Notes"
+              name="notes"
+              id="notes"
+              :rows="3"
+              description="Notes regarding the customer."
+              :error="notesError"
+            />
           </div>
         </div>
         <div
@@ -744,6 +466,7 @@ watch(
 );
 
 watch(useShippingForBilling, (newValue) => {
+  console.log(newValue);
   if (newValue) {
     billing_address.value = shipping_address.value;
     billing_city.value = shipping_city.value;
@@ -766,4 +489,28 @@ watch(selectedShippingState, (newState) => {
 watch(selectedBillingState, (newState) => {
   billing_state.value = newState.value;
 });
+
+interface State {
+  name: string;
+  value: string;
+}
+
+function createStateUpdater(
+  stateValueRef: Ref<string>,
+  stateObjRef: Ref<State>
+) {
+  return (newState: State) => {
+    stateValueRef.value = newState.value;
+    stateObjRef.value = newState;
+  };
+}
+
+const updateShippingState = createStateUpdater(
+  shipping_state,
+  selectedShippingState
+);
+const updateBillingState = createStateUpdater(
+  billing_state,
+  selectedBillingState
+);
 </script>
