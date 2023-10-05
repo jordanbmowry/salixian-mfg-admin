@@ -1,12 +1,34 @@
 <template>
   <teleport to="body">
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-stone-800 bg-opacity-20 backdrop-blur-md"
-    >
-      <div class="loader"></div>
-    </div>
+    <TransitionRoot as="template" :show="true">
+      <Dialog as="div" class="fixed inset-0 z-50 overflow-y-hidden">
+        <TransitionChild
+          as="template"
+          enter="ease-out duration-300"
+          enter-from="opacity-0"
+          enter-to="opacity-100"
+          leave="ease-in duration-200"
+          leave-from="opacity-100"
+          leave-to="opacity-0"
+        >
+          <div
+            class="fixed inset-0 bg-stone-800 bg-opacity-20 backdrop-blur-md z-40"
+          />
+        </TransitionChild>
+
+        <div
+          class="fixed inset-0 z-50 flex items-center justify-center w-screen"
+        >
+          <div class="loader"></div>
+        </div>
+      </Dialog>
+    </TransitionRoot>
   </teleport>
 </template>
+
+<script lang="ts" setup>
+import { Dialog, TransitionChild, TransitionRoot } from '@headlessui/vue';
+</script>
 
 <style scoped>
 @keyframes spinColor {
