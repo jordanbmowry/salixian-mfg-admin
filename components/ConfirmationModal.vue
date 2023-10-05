@@ -1,7 +1,7 @@
 <template>
   <teleport to="body">
     <TransitionRoot as="template" :show="open">
-      <Dialog as="div" class="relative z-10" @close="closeModal">
+      <Dialog as="div" class="fixed inset-0 z-50" @close="closeModal">
         <TransitionChild
           as="template"
           enter="ease-out duration-300"
@@ -12,13 +12,13 @@
           leave-to="opacity-0"
         >
           <div
-            class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+            class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-40"
           />
         </TransitionChild>
 
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="fixed inset-0 z-50 w-screen overflow-y-auto">
           <div
-            class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+            class="flex min-h-screen items-end justify-center p-4 text-center sm:items-center sm:p-0"
           >
             <TransitionChild
               as="template"
@@ -34,11 +34,23 @@
               >
                 <div class="sm:flex sm:items-start">
                   <div
-                    class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+                    class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10"
+                    :class="{
+                      'bg-red-100': dangerMode,
+                      'bg-stone-100': !dangerMode,
+                    }"
                   >
-                    <ExclamationTriangleIcon
-                      class="h-6 w-6 text-red-600"
+                    <font-awesome-icon
+                      v-if="dangerMode"
                       aria-hidden="true"
+                      class="h-6 w-6 text-red-600"
+                      :icon="['fas', 'triangle-exclamation']"
+                    />
+                    <font-awesome-icon
+                      v-else
+                      :icon="['fas', 'circle-info']"
+                      aria-hidden="true"
+                      class="h-6 w-6 text-stone-600"
                     />
                   </div>
                   <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
@@ -59,6 +71,12 @@
                   <button
                     type="button"
                     class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                    :class="{
+                      'bg-red-600': dangerMode,
+                      'hover:bg-red-500': dangerMode,
+                      'bg-stone-600': !dangerMode,
+                      'hover:bg-stone-500': !dangerMode,
+                    }"
                     @click="confirmAction"
                   >
                     {{ confirmButtonText }}
@@ -96,12 +114,14 @@ interface Props {
   message: string;
   confirmButtonText: string;
   initialOpenState?: boolean;
+  dangerMode?: boolean;
 }
 
 const { heading, message, confirmButtonText, initialOpenState } = withDefaults(
   defineProps<Props>(),
   {
     initialOpenState: true,
+    dangerMode: false,
   }
 );
 
