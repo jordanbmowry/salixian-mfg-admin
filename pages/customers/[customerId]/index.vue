@@ -147,10 +147,14 @@ const paymentStatusClass = (status: string) => {
         <div v-if="customerData.billing_address" class="flex flex-col">
           <h2>Billing Address</h2>
           <address>
-            <div class="mt-2 text-sm leading-6 text-gray-900 break-words">
+            <div
+              class="text-lg font-semibold tracking-tight text-stone-500 break-words"
+            >
               {{ customerData.billing_address }}
             </div>
-            <div class="text-sm leading-6 text-gray-900">
+            <div
+              class="text-lg font-semibold tracking-tight text-stone-500 break-words"
+            >
               {{ customerData.billing_city }}, {{ customerData.billing_state }}
               {{ customerData.billing_zip }}
             </div>
@@ -159,10 +163,14 @@ const paymentStatusClass = (status: string) => {
         <div v-if="customerData.shipping_address" class="flex flex-col">
           <h2>Shipping Address</h2>
           <address>
-            <div class="mt-2 text-sm leading-6 text-gray-900 break-words">
+            <div
+              class="text-lg font-semibold tracking-tight text-stone-500 break-words"
+            >
               {{ customerData.shipping_address }}
             </div>
-            <div class="text-sm leading-6 text-gray-900">
+            <div
+              class="text-lg font-semibold tracking-tight text-stone-500 break-words"
+            >
               {{ customerData.shipping_city }},
               {{ customerData.shipping_state }}
               {{ customerData.shipping_zip }}
@@ -179,10 +187,10 @@ const paymentStatusClass = (status: string) => {
       <div
         class="sm:border-l border-t border-gray-200 py-6 px-4 sm:px-6 lg:px-8"
       >
-        <p class="text-sm font-medium leading-6 text-gray-900">Email</p>
+        <h2 class="leading-6 text-gray-900">Email</h2>
         <p class="mt-2 flex items-baseline gap-x-2">
           <span
-            class="text-lg font-semibold tracking-tight text-gray-900 break-words"
+            class="text-lg font-semibold tracking-tight text-stone-500 break-words"
           >
             {{ customerData.email }}</span
           >
@@ -191,9 +199,9 @@ const paymentStatusClass = (status: string) => {
       <div
         class="lg:border-l border-t border-gray-200 py-6 px-4 sm:px-6 lg:px-8"
       >
-        <p class="text-sm font-medium leading-6 text-gray-900">Phone</p>
+        <h2 class="leading-6 text-gray-900">Phone</h2>
         <p class="mt-2 flex items-baseline gap-x-2">
-          <span class="text-lg font-semibold tracking-tight text-gray-900">{{
+          <span class="text-lg font-semibold tracking-tight text-stone-500">{{
             formatPhoneNumber(customerData.phone_number)
           }}</span>
         </p>
@@ -201,13 +209,11 @@ const paymentStatusClass = (status: string) => {
       <div
         class="sm:border-l border-t border-gray-200 py-6 px-4 sm:px-6 lg:px-8"
       >
-        <p class="text-sm font-medium leading-6 text-gray-900">
-          Customer since
-        </p>
+        <h2 class="leading-6 text-gray-900">Customer since</h2>
         <p class="mt-2 flex items-baseline gap-x-2">
           <span
             v-if="customerData.created_at"
-            class="text-lg font-semibold tracking-tight text-gray-900"
+            class="text-lg font-semibold tracking-tight text-stone-500"
           >
             {{ formatDate(customerData.created_at) }}</span
           >
@@ -216,11 +222,11 @@ const paymentStatusClass = (status: string) => {
       <div
         class="lg:border-l border-t border-gray-200 py-6 px-4 sm:px-6 lg:px-8"
       >
-        <p class="text-sm font-medium leading-6 text-gray-900">Updated at</p>
+        <h2 class="leading-6 text-gray-900">Updated at</h2>
         <p class="mt-2 flex items-baseline gap-x-2">
           <span
             v-if="customerData.updated_at"
-            class="text-lg font-semibold tracking-tight text-gray-900"
+            class="text-lg font-semibold tracking-tight text-stone-500"
             >{{ formatDate(customerData.updated_at) }}</span
           >
         </p>
@@ -232,7 +238,7 @@ const paymentStatusClass = (status: string) => {
       class="my-4 flex flex-col items-center bg-gray-50 rounded-sm py-4"
     >
       <h2>Customer Notes</h2>
-      <p class="text-base break-words">
+      <p class="text-base break-words text-stone-500">
         {{ customerData.notes }}
       </p>
     </section>
