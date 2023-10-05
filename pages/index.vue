@@ -132,7 +132,7 @@ const stats = ref([
           </dd>
         </div>
       </dl>
-      <div class="flex flex-col gap-10 mt-10">
+      <div class="grid xl:grid-cols-2 gap-4 mt-10">
         <MonthlyRevenueChart
           v-if="monthlyRevenueData"
           :monthlyRevenueData="monthlyRevenueData"
