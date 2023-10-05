@@ -1,6 +1,6 @@
 <template>
   <teleport to="body">
-    <TransitionRoot as="template" :show="open">
+    <TransitionRoot as="template" :show="isModalOpen">
       <Dialog as="div" class="fixed inset-0 z-50" @close="closeModal">
         <TransitionChild
           as="template"
@@ -13,7 +13,7 @@
         >
           <div
             class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-40"
-          />
+          ></div>
         </TransitionChild>
 
         <div class="fixed inset-0 z-50 w-screen overflow-y-auto">
@@ -57,13 +57,10 @@
                     <DialogTitle
                       as="h3"
                       class="text-base font-semibold leading-6 text-gray-900"
+                      >{{ heading }}</DialogTitle
                     >
-                      {{ heading }}
-                    </DialogTitle>
                     <div class="mt-2">
-                      <p class="text-sm text-gray-500">
-                        {{ message }}
-                      </p>
+                      <p class="text-sm text-gray-500">{{ message }}</p>
                     </div>
                   </div>
                 </div>
@@ -99,7 +96,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, watch } from 'vue';
 import {
   Dialog,
   DialogPanel,
@@ -107,33 +104,29 @@ import {
   TransitionChild,
   TransitionRoot,
 } from '@headlessui/vue';
-import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 
 interface Props {
   heading: string;
   message: string;
   confirmButtonText: string;
-  initialOpenState?: boolean;
+  show: boolean;
   dangerMode?: boolean;
 }
 
-const { heading, message, confirmButtonText, initialOpenState } = withDefaults(
-  defineProps<Props>(),
-  {
-    initialOpenState: true,
-    dangerMode: false,
+const { heading, message, confirmButtonText, show, dangerMode } =
+  defineProps<Props>();
+const emit = defineEmits(['update:open', 'confirm']);
+const isModalOpen = ref(show);
+watch(
+  () => show,
+  (newVal) => {
+    isModalOpen.value = newVal;
   }
 );
-
-const emit = defineEmits(['update:open', 'confirm']);
-
-const open = ref(initialOpenState);
-
 const closeModal = () => {
-  open.value = false;
+  isModalOpen.value = false;
   emit('update:open', false);
 };
-
 const confirmAction = () => {
   emit('confirm');
   closeModal();

@@ -1,6 +1,6 @@
 <template>
   <teleport to="body">
-    <TransitionRoot as="template" :show="open">
+    <TransitionRoot :show="isOpen" as="template">
       <Dialog as="div" class="fixed inset-0 z-50" @close="closeModal">
         <TransitionChild
           as="template"
@@ -72,7 +72,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, watch } from 'vue';
 import {
   Dialog,
   DialogPanel,
@@ -86,22 +86,23 @@ interface Props {
   heading: string;
   message: string;
   buttonText: string;
-  initialOpenState?: boolean;
+  show: boolean;
 }
 
-const { heading, message, buttonText, initialOpenState } = withDefaults(
-  defineProps<Props>(),
-  {
-    initialOpenState: true,
+const { heading, message, buttonText, show } = defineProps<Props>();
+const emit = defineEmits(['update:open']);
+
+const isOpen = ref(show);
+
+watch(
+  () => show,
+  (newVal) => {
+    isOpen.value = newVal;
   }
 );
 
-const emit = defineEmits(['update:open']);
-
-const open = ref(initialOpenState);
-
 const closeModal = () => {
-  open.value = false;
+  isOpen.value = false;
   emit('update:open', false);
 };
 </script>
