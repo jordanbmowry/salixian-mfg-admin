@@ -1,12 +1,13 @@
 <template>
-  <div>
-    <h2 class="text-center mb-6">Order Status Distribution by Month</h2>
-    <BarChart :chartData="chartData" :options="options" />
-  </div>
+  <ClientOnly>
+    <div>
+      <h2 class="text-center mb-6">Order Status Distribution by Month</h2>
+      <BarChart :chartData="chartData" :options="options" />
+    </div>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, defineProps } from 'vue';
 import { BarChart } from 'vue-chart-3';
 import type { ChartData } from 'chart.js';
 

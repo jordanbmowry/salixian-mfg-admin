@@ -1,8 +1,10 @@
 <template>
-  <div>
-    <h2 class="text-center mb-6">Total Revenue by month</h2>
-    <BarChart :chartData="chartData" :options="options" />
-  </div>
+  <ClientOnly>
+    <div>
+      <h2 class="text-center mb-6">Total Revenue by month</h2>
+      <BarChart :chartData="chartData" :options="options" />
+    </div>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
