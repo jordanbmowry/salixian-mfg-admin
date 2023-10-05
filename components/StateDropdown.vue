@@ -134,7 +134,7 @@ const focusHiddenInput = () => {
 
 const updateSelectedState = (newState) => {
   selectedState.value = newState;
-  emit('update:modelValue', newState.value);
+  emit('update:modelValue', selectedState.value);
   searchQuery.value = '';
 };
 
