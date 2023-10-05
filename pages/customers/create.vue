@@ -194,6 +194,7 @@
               :error="billingZipError"
             />
             <TextAreaField
+              v-model.trim="notes"
               class="col-span-full"
               label="Notes"
               name="notes"
