@@ -12,8 +12,8 @@
         rows="3"
         class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
       ></textarea>
-      <p v-if="errorRef" class="text-red-600 text-sm m-0 p-0">
-        {{ errorRef }}
+      <p v-if="error" class="text-red-600 text-sm m-0 p-0">
+        {{ error }}
       </p>
     </div>
     <p class="mt-3 text-sm leading-6 text-gray-600">
@@ -22,29 +22,29 @@
   </div>
 </template>
 
-<script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+<script setup lang="ts">
+import { ref, toRefs, watch } from 'vue';
 
-const props = defineProps({
-  label: String,
-  modelValue: String,
-  name: String,
-  id: String,
-  error: String,
-});
+interface Props {
+  label: string;
+  modelValue: string | undefined;
+  name: string;
+  id: string;
+  error?: string;
+}
 
-const { label, modelValue, name, id, error } = props;
-
-const modelValueRef = ref(modelValue);
-const errorRef = ref(error);
-
+const props = defineProps<Props>();
 const emit = defineEmits(['update:modelValue']);
 
-watch(modelValueRef, (newVal) => {
-  emit('update:modelValue', newVal);
+const { label, modelValue, name, id, error } = toRefs(props);
+
+const modelValueRef = ref<string>(modelValue.value || '');
+
+watch(modelValueRef, (newValue) => {
+  emit('update:modelValue', newValue);
 });
 
-watch(errorRef, (newError) => {
-  emit('update:error', newError);
+watch(modelValue, (newVal) => {
+  modelValueRef.value = newVal ?? '';
 });
 </script>
