@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { formatMoney, formatDate } from '~/utils';
-import { format } from 'date-fns';
-
-const baseUrl = useRuntimeConfig().public.baseURL;
 
 const numberOfCustomers = ref<number>();
 const numberOfOrders = ref<number>();

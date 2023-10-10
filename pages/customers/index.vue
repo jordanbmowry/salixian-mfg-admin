@@ -1,209 +1,220 @@
 <template>
-  <div v-if="apiData.data" class="px-4 sm:px-6 lg:px-8">
-    <div class="md:flex md:justify-between gap-4">
-      <DatePicker
-        class="max-w-sm self-end mx-auto 2xl:mx-0"
-        type="date"
-        v-model="selectedDates"
-        range
-      />
+  <main>
+    <h1 class="font-semibold leading-6 text-4xl pb-10">Customers</h1>
+    <div v-if="apiData.data" class="px-4 sm:px-6 lg:px-8">
+      <div class="md:flex md:justify-between gap-4">
+        <DatePicker
+          class="max-w-sm self-end mx-auto 2xl:mx-0"
+          type="date"
+          v-model="selectedDates"
+          range
+        />
 
-      <form class="grow" @submit="debounceOnSubmit">
-        <div class="flex flex-col items-center">
-          <Listbox as="div" v-model="selected" class="w-full">
-            <div class="relative">
-              <ListboxButton
-                class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 text-xs sm:text-sm"
-              >
-                <span class="block truncate">{{ selected.name }}</span>
-                <span
-                  class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+        <form class="grow" @submit="debounceOnSubmit">
+          <div class="flex flex-col items-center">
+            <Listbox as="div" v-model="selected" class="w-full">
+              <div class="relative">
+                <ListboxButton
+                  class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 text-xs sm:text-sm"
                 >
-                  <ChevronUpDownIcon
-                    class="h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                </span>
-              </ListboxButton>
-
-              <transition
-                leave-active-class="transition ease-in duration-100"
-                leave-from-class="opacity-100"
-                leave-to-class="opacity-0"
-              >
-                <ListboxOptions
-                  class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-                >
-                  <ListboxOption
-                    as="template"
-                    v-for="search in searchBy"
-                    :key="search.id"
-                    :value="search"
-                    v-slot="{ active, selected }"
+                  <span class="block truncate">{{ selected.name }}</span>
+                  <span
+                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
                   >
-                    <li
-                      :class="[
-                        active ? 'bg-stone-600 text-white' : 'text-gray-900',
-                        'relative cursor-default select-none py-2 pl-3 pr-9',
-                      ]"
-                    >
-                      <span
-                        :class="[
-                          selected ? 'font-semibold' : 'font-normal',
-                          'block truncate',
-                        ]"
-                        >{{ search.name }}</span
-                      >
+                    <ChevronUpDownIcon
+                      class="h-5 w-5 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  </span>
+                </ListboxButton>
 
-                      <span
-                        v-if="selected"
+                <transition
+                  leave-active-class="transition ease-in duration-100"
+                  leave-from-class="opacity-100"
+                  leave-to-class="opacity-0"
+                >
+                  <ListboxOptions
+                    class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                  >
+                    <ListboxOption
+                      as="template"
+                      v-for="search in searchBy"
+                      :key="search.id"
+                      :value="search"
+                      v-slot="{ active, selected }"
+                    >
+                      <li
                         :class="[
-                          active ? 'text-white' : 'text-stone-600',
-                          'absolute inset-y-0 right-0 flex items-center pr-4',
+                          active ? 'bg-stone-600 text-white' : 'text-gray-900',
+                          'relative cursor-default select-none py-2 pl-3 pr-9',
                         ]"
                       >
-                        <CheckIcon class="h-5 w-5" aria-hidden="true" />
-                      </span>
-                    </li>
-                  </ListboxOption>
-                </ListboxOptions>
-              </transition>
-            </div>
-          </Listbox>
-          <div class="w-full">
-            <label for="search" class="sr-only">Search</label>
-            <div class="relative w-full self-end">
-              <div
-                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-              >
-                <font-awesome-icon
-                  class="h-5 w-5 text-gray-400"
-                  :icon="['fas', 'magnifying-glass']"
+                        <span
+                          :class="[
+                            selected ? 'font-semibold' : 'font-normal',
+                            'block truncate',
+                          ]"
+                          >{{ search.name }}</span
+                        >
+
+                        <span
+                          v-if="selected"
+                          :class="[
+                            active ? 'text-white' : 'text-stone-600',
+                            'absolute inset-y-0 right-0 flex items-center pr-4',
+                          ]"
+                        >
+                          <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                        </span>
+                      </li>
+                    </ListboxOption>
+                  </ListboxOptions>
+                </transition>
+              </div>
+            </Listbox>
+            <div class="w-full">
+              <label for="search" class="sr-only">Search</label>
+              <div class="relative w-full self-end">
+                <div
+                  class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+                >
+                  <font-awesome-icon
+                    class="h-5 w-5 text-gray-400"
+                    :icon="['fas', 'magnifying-glass']"
+                  />
+                </div>
+                <input
+                  id="search"
+                  name="search"
+                  class="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  :placeholder="`${selected.name}`"
+                  type="search"
+                  v-model="search"
+                  @input="debounceOnSubmit"
                 />
               </div>
-              <input
-                id="search"
-                name="search"
-                class="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                :placeholder="`${selected.name}`"
-                type="search"
-                v-model="search"
-                @input="debounceOnSubmit"
-              />
             </div>
           </div>
-        </div>
-      </form>
+        </form>
 
-      <div class="mt-4 sm:mt-0 sm:flex-none">
-        <NuxtLink
-          to="/customers/create"
-          type="submit"
-          class="flex w-full justify-center rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600"
-        >
-          Create customer
-        </NuxtLink>
-      </div>
-    </div>
-
-    <div class="mt-4 flow-root">
-      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <div
-            class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg"
+        <div class="mt-4 sm:mt-0 sm:flex-none">
+          <NuxtLink
+            to="/customers/create"
+            type="submit"
+            class="flex w-full justify-center rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600"
           >
-            <table class="min-w-full divide-y divide-gray-300">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th
-                    scope="col"
-                    class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-                  >
-                    Name
-                  </th>
-                  <th
-                    scope="col"
-                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Phone
-                  </th>
-                  <th
-                    scope="col"
-                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Email
-                  </th>
-                  <th
-                    scope="col"
-                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Customer Since
-                  </th>
-                  <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                    <span class="sr-only">Edit</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody
-                v-if="apiData.data"
-                class="divide-y divide-gray-200 bg-white"
-              >
-                <tr
-                  v-for="customer in apiData.data"
-                  :key="customer.email"
-                  class="cursor-pointer"
-                  @click="() => navigateToCustomer(customer.customer_id)"
-                >
-                  <td
-                    class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
-                  >
-                    {{
-                      createFullName(customer.first_name, customer.last_name)
-                    }}
-                  </td>
-                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    {{ formatPhoneNumber(customer.phone_number) }}
-                  </td>
-                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    {{ customer.email }}
-                  </td>
-                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    {{ formatDate(customer.created_at) }}
-                  </td>
-                  <td
-                    class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
-                  >
-                    <NuxtLink
-                      :to="`/customers/${customer.customer_id}/edit`"
-                      class="text-stone-600 hover:text-stone-900"
-                      >Edit<span class="sr-only"
-                        >,
-                        {{
-                          createFullName(
-                            customer.first_name,
-                            customer.last_name
-                          )
-                        }}</span
-                      ></NuxtLink
+            Create customer
+          </NuxtLink>
+        </div>
+      </div>
+
+      <div class="mt-4 flow-root">
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div
+            class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8"
+          >
+            <div
+              class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg"
+            >
+              <table class="min-w-full divide-y divide-gray-300">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      scope="col"
+                      class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                     >
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                      Name
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Phone
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Email
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Customer Since
+                    </th>
+                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                      <span class="sr-only">Edit</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  v-if="apiData.data"
+                  class="divide-y divide-gray-200 bg-white"
+                >
+                  <tr
+                    v-for="customer in apiData.data"
+                    :key="customer.email"
+                    class="cursor-pointer"
+                    @click="() => navigateToCustomer(customer.customer_id)"
+                  >
+                    <td
+                      class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                    >
+                      {{
+                        createFullName(customer.first_name, customer.last_name)
+                      }}
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      {{ formatPhoneNumber(customer.phone_number) }}
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      {{ customer.email }}
+                    </td>
+                    <td
+                      class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                    >
+                      {{ formatDate(customer.created_at) }}
+                    </td>
+                    <td
+                      class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
+                    >
+                      <NuxtLink
+                        :to="`/customers/${customer.customer_id}/edit`"
+                        class="text-stone-600 hover:text-stone-900"
+                        >Edit<span class="sr-only"
+                          >,
+                          {{
+                            createFullName(
+                              customer.first_name,
+                              customer.last_name
+                            )
+                          }}</span
+                        ></NuxtLink
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <Pagination
+              @update:current-page="handleUpdateCurrentPage"
+              :currentPage="currentPage"
+              :totalPages="totalPages"
+              :startItem="startItem"
+              :endItem="endItem"
+              :totalItems="totalItems"
+            />
           </div>
-          <Pagination
-            @update:current-page="handleUpdateCurrentPage"
-            :currentPage="currentPage"
-            :totalPages="totalPages"
-            :startItem="startItem"
-            :endItem="endItem"
-            :totalItems="totalItems"
-          />
         </div>
       </div>
     </div>
-  </div>
-  <TableLoader v-else />
+    <TableLoader v-else />
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -264,6 +275,7 @@ watch([selected, selectedDates], () => {
 });
 
 const onSubmit = () => {
+  currentPage.value = 1;
   fetchData();
 };
 const debounceOnSubmit = useDebounceFn(onSubmit, 500);
