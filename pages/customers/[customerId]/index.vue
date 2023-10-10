@@ -81,7 +81,7 @@ const handleUpdateCurrentPage = (newCurrentPage: number) => {
   currentPage.value = newCurrentPage;
 };
 
-const statusClass = (status: string) => {
+const orderStatusClass = (status: string) => {
   switch (status) {
     case 'pending':
       return 'bg-yellow-300 text-yellow-800 px-2 py-1 rounded';
@@ -108,6 +108,11 @@ const paymentStatusClass = (status: string) => {
       return '';
   }
 };
+
+function stripDashesFromPhoneNumber(phoneNumber: string = '') {
+  console.log(phoneNumber);
+  return phoneNumber.replace(/-/g, '');
+}
 </script>
 
 <template>
@@ -125,7 +130,7 @@ const paymentStatusClass = (status: string) => {
       <NuxtLink
         :to="`/customers/${customerId}/edit`"
         type="submit"
-        class="rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600"
+        class="rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600 cursor-pointer"
       >
         Edit customer
       </NuxtLink>
@@ -185,6 +190,7 @@ const paymentStatusClass = (status: string) => {
       class="grid grid-cols-1 bg-gray-50 sm:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-4"
     >
       <div
+        v-if="customerData.email"
         class="sm:border-l border-t border-gray-200 py-6 px-4 sm:px-6 lg:px-8"
       >
         <h2 class="leading-6 text-gray-900">Email</h2>
@@ -192,18 +198,32 @@ const paymentStatusClass = (status: string) => {
           <span
             class="text-lg font-semibold tracking-tight text-stone-500 break-words"
           >
-            {{ customerData.email }}</span
+            <NuxtLink
+              class="cursor-pointer"
+              target="_blank"
+              :to="`mailto:${customerData.email}`"
+              >{{ customerData.email }}</NuxtLink
+            ></span
           >
         </p>
       </div>
       <div
+        v-if="customerData.phone_number"
         class="lg:border-l border-t border-gray-200 py-6 px-4 sm:px-6 lg:px-8"
       >
         <h2 class="leading-6 text-gray-900">Phone</h2>
         <p class="mt-2 flex items-baseline gap-x-2">
-          <span class="text-lg font-semibold tracking-tight text-stone-500">{{
-            formatPhoneNumber(customerData.phone_number)
-          }}</span>
+          <span class="text-lg font-semibold tracking-tight text-stone-500">
+            <NuxtLink
+              class="cursor-pointer"
+              target="_blank"
+              :to="`tel:${stripDashesFromPhoneNumber(
+                customerData.phone_number
+              )}`"
+            >
+              {{ formatPhoneNumber(customerData.phone_number) }}</NuxtLink
+            ></span
+          >
         </p>
       </div>
       <div
@@ -245,11 +265,11 @@ const paymentStatusClass = (status: string) => {
 
     <!-- Orders -->
 
-    <div class="my-4 sm:ml-16 sm:mt-0 sm:flex-none flex justify-end">
+    <div class="my-4 sm:ml-16 sm:flex-none flex justify-end">
       <NuxtLink
         :to="`/orders/${customerId}/create`"
         type="submit"
-        class="rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600"
+        class="rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600 cursor-pointer"
       >
         Create order
       </NuxtLink>
@@ -285,7 +305,7 @@ const paymentStatusClass = (status: string) => {
               Order Status
             </h4>
             <span
-              :class="statusClass(order.order_status)"
+              :class="orderStatusClass(order.order_status)"
               class="text-xs py-1 px-2 rounded-full"
             >
               {{ order.order_status }}
@@ -401,7 +421,7 @@ const paymentStatusClass = (status: string) => {
               >
                 <div class="hidden text-gray-900 sm:block">
                   <span
-                    :class="statusClass(order.order_status)"
+                    :class="orderStatusClass(order.order_status)"
                     class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-400/20 rounded-md"
                   >
                     {{ order.order_status }}
