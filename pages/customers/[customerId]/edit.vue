@@ -3,12 +3,12 @@
     <ConfirmationModal
       v-if="isConfirmationModalOpen"
       :show="isConfirmationModalOpen"
-      @confirm="handleUpdateCustomer"
+      @confirm="confimationModalState.confirm"
       @update:open="isConfirmationModalOpen = $event"
-      :dangerMode="false"
-      heading="Confirmation"
-      message="Do you want to proceed with updating the customer?"
-      confirmButtonText="Yes"
+      :dangerMode="confimationModalState.dangerMode"
+      :heading="confimationModalState.heading"
+      :message="confimationModalState.message"
+      :confirmButtonText="confimationModalState.confirmButtonText"
     />
 
     <NotificationToast
@@ -30,7 +30,7 @@
       </div>
 
       <form
-        @submit.prevent="() => (isConfirmationModalOpen = true)"
+        @submit.prevent="handleConfirmUpdate"
         class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2"
       >
         <div class="px-4 py-6 sm:p-8">
@@ -232,6 +232,47 @@
             Save
           </button>
         </div>
+        <div
+          class="bg-red-100 shadow-sm ring-1 ring-red-900/5 rounded md:col-span-2 border border-red-600"
+        >
+          <div class="bg-white px-4 py-5 sm:px-6">
+            <h3 class="text-xl font-extrabold leading-6 text-red-600 my-4">
+              Danger zone
+            </h3>
+            <div class="flex justify-between items-center gap-6 my-6">
+              <div class="flex flex-col">
+                <p class="text-base text-bold">Soft delete this customer</p>
+                <p class="text-base text-gray-600">
+                  The customer will still remain in the database but will no
+                  longer appear in the UI
+                </p>
+              </div>
+              <button
+                type="button"
+                @click="handleConfirmSoftDelete"
+                class="rounded-md bg-red-100 px-3 py-2 text-sm font-semibold text-red-600 shadow-sm hover:bg-red-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+              >
+                Soft Delete
+              </button>
+            </div>
+            <div class="flex justify-between items-center gap-6 my-6">
+              <div class="flex flex-col">
+                <p class="text-base text-bold">Hard delete this customer</p>
+                <p class="text-base text-gray-600">
+                  Once you delete this customer, there is no going back. Please
+                  be certain.
+                </p>
+              </div>
+              <button
+                @click="handleConfirmHardDelete"
+                type="button"
+                class="rounded-md bg-red-100 px-3 py-2 text-sm font-semibold text-red-600 shadow-sm hover:bg-red-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+              >
+                Hard Delete
+              </button>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   </div>
@@ -252,6 +293,7 @@ const route = useRoute();
 
 const customerId = route.params.customerId;
 const isConfirmationModalOpen = ref(false);
+const confimationModalState = ref({});
 const useShippingForBilling = ref(false);
 const isSubmitting = ref(false);
 const isErrorShowing = ref(false);
@@ -451,6 +493,16 @@ const handleUpdateCustomer = handleSubmit(async (formData) => {
   }
 });
 
+function handleSoftDeleteCustomer() {
+  // TODO# finish out this func
+  console.log('handleSoftDeleteCustomer');
+}
+
+function handleHardDeleteCustomer() {
+  // TODO# finish out this func
+  console.log('handleHardDeleteCustomer');
+}
+
 function formatToPhoneNumber(value: string) {
   let cleaned = ('' + value).replace(/\D/g, '');
   let match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
@@ -517,7 +569,38 @@ const updateBillingState = createStateUpdater(
   selectedBillingState
 );
 
-const handleOpenConfirmationModal = () => {
+const handleConfirmUpdate = () => {
+  confimationModalState.value = {
+    confirm: handleUpdateCustomer,
+    dangerMode: false,
+    heading: 'Confirmation',
+    message: 'Do you want to proceed with updating the customer?',
+    confirmButtonText: 'Yes',
+  };
+
+  isConfirmationModalOpen.value = true;
+};
+const handleConfirmSoftDelete = () => {
+  confimationModalState.value = {
+    confirm: handleSoftDeleteCustomer,
+    dangerMode: true,
+    heading: 'Soft delete customer',
+    message: 'Do you want to proceed with soft deleting the customer?',
+    confirmButtonText: 'Soft delete',
+  };
+
+  isConfirmationModalOpen.value = true;
+};
+
+const handleConfirmHardDelete = () => {
+  confimationModalState.value = {
+    confirm: handleHardDeleteCustomer,
+    dangerMode: true,
+    heading: 'Hard delete customer',
+    message: 'Do you want to permanently delete this customer?',
+    confirmButtonText: 'Hard delete',
+  };
+
   isConfirmationModalOpen.value = true;
 };
 </script>
