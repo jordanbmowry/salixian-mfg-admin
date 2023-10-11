@@ -111,25 +111,25 @@
                   <tr>
                     <th
                       scope="col"
-                      class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                      class="py-3.5 pl-4 pr-3 text-left text-base font-semibold text-gray-900 sm:pl-6"
                     >
                       Customer
                     </th>
                     <th
                       scope="col"
-                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      class="px-3 py-3.5 text-left text-base font-semibold text-gray-900"
                     >
                       Order Date
                     </th>
                     <th
                       scope="col"
-                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      class="px-3 py-3.5 text-left text-base font-semibold text-gray-900"
                     >
                       Order Status
                     </th>
                     <th
                       scope="col"
-                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      class="px-3 py-3.5 text-left text-base font-semibold text-gray-900"
                     >
                       Payment Status
                     </th>
@@ -146,21 +146,23 @@
                     v-for="order in orders.data"
                     :key="order.order_id"
                     class="cursor-pointer"
-                    @click="() => navigateToOrder(order.order_id)"
+                    @click="
+                      () => navigateToOrder(order.order_id, order.customer_id)
+                    "
                   >
                     <td
                       class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
                     >
                       <address class="flex flex-col justify-center gap-2">
-                        <div>
+                        <div class="font-semibold">
                           {{
                             createFullName(order.first_name, order.last_name)
                           }}
                         </div>
-                        <div>
+                        <div class="text-gray-500">
                           {{ formatPhoneNumber(order.phone_number) }}
                         </div>
-                        <div>
+                        <div class="text-gray-500">
                           {{ order.email }}
                         </div>
                       </address>
@@ -189,10 +191,12 @@
                     <td
                       class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
                     >
-                      <NuxtLink
-                        :to="`/orders/${order.order_id}/edit`"
-                        class="text-stone-600 hover:text-stone-900"
-                        >Edit<span class="sr-only">
+                      <NuxtLink :to="`/orders/${order.order_id}/edit`"
+                        ><font-awesome-icon
+                          size="2x"
+                          class="text-stone-600 hover:text-stone-900"
+                          :icon="['fas', 'pen-to-square']"
+                        /><span class="sr-only">
                           order: {{ order.order_id }}</span
                         ></NuxtLink
                       >
@@ -303,8 +307,8 @@ const handleUpdateCurrentPage = (newCurrentPage: number) => {
   currentPage.value = newCurrentPage;
 };
 
-const navigateToOrder = async (orderId: string) => {
-  await navigateTo(`/orders/${orderId}`);
+const navigateToOrder = async (orderId: string, customerId: string) => {
+  await navigateTo(`/orders/${customerId}/${orderId}`);
 };
 
 function orderStatusClass(status: string) {
