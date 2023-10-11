@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { formatDate, formatPhoneNumber } from '~/utils';
+import {
+  formatDate,
+  formatPhoneNumber,
+  stripDashesFromPhoneNumber,
+  orderStatusClass,
+  paymentStatusClass,
+} from '~/utils';
 
 interface PaginationData {
   currentPage: number;
@@ -80,39 +86,6 @@ const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
 const handleUpdateCurrentPage = (newCurrentPage: number) => {
   currentPage.value = newCurrentPage;
 };
-
-const orderStatusClass = (status: string) => {
-  switch (status) {
-    case 'pending':
-      return 'bg-yellow-300 text-yellow-800 px-2 py-1 rounded';
-    case 'in progress':
-      return 'bg-blue-300 text-blue-800 px-2 py-1 rounded';
-    case 'complete':
-      return 'bg-green-300 text-green-800 px-2 py-1 rounded';
-    case 'canceled':
-      return 'bg-red-300 text-red-800 px-2 py-1 rounded';
-    default:
-      return '';
-  }
-};
-
-const paymentStatusClass = (status: string) => {
-  switch (status) {
-    case 'not paid':
-      return 'bg-red-200 text-red-800 px-2 py-1 rounded';
-    case 'partially paid':
-      return 'bg-yellow-200 text-yellow-800 px-2 py-1 rounded';
-    case 'fully paid':
-      return 'bg-green-200 text-green-800 px-2 py-1 rounded';
-    default:
-      return '';
-  }
-};
-
-function stripDashesFromPhoneNumber(phoneNumber: string = '') {
-  console.log(phoneNumber);
-  return phoneNumber.replace(/-/g, '');
-}
 </script>
 
 <template>
@@ -276,12 +249,16 @@ function stripDashesFromPhoneNumber(phoneNumber: string = '') {
     </div>
 
     <TableLoader v-if="isMoreOrdersLoading" />
+
     <div v-else-if="orderData.length" class="border-t border-gray-200 pt-11">
-      <h2
-        class="px-4 text-base font-semibold leading-7 text-gray-900 sm:px-6 lg:px-8"
-      >
-        Customer orders
-      </h2>
+      <div class="border-b border-stone-200 bg-white px-4 py-5 sm:px-6">
+        <h3
+          class="text-base font-extrabold leading-6 text-stone-900 drop-shadow-md"
+        >
+          Customer order history
+        </h3>
+      </div>
+
       <!-- Mobile view -->
       <div class="lg:hidden px-4 py-6">
         <div
