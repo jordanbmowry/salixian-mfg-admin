@@ -121,25 +121,25 @@
                   <tr>
                     <th
                       scope="col"
-                      class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                      class="py-3.5 pl-4 pr-3 text-left text-base font-semibold text-gray-900 sm:pl-6"
                     >
                       Name
                     </th>
                     <th
                       scope="col"
-                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      class="px-3 py-3.5 text-left text-base font-semibold text-gray-900"
                     >
                       Phone
                     </th>
                     <th
                       scope="col"
-                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      class="px-3 py-3.5 text-left text-base font-semibold text-gray-900"
                     >
                       Email
                     </th>
                     <th
                       scope="col"
-                      class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      class="px-3 py-3.5 text-left text-base font-semibold text-gray-900"
                     >
                       Customer Since
                     </th>
@@ -183,10 +183,12 @@
                     <td
                       class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
                     >
-                      <NuxtLink
-                        :to="`/customers/${customer.customer_id}/edit`"
-                        class="text-stone-600 hover:text-stone-900"
-                        >Edit<span class="sr-only"
+                      <NuxtLink :to="`/customers/${customer.customer_id}/edit`"
+                        ><font-awesome-icon
+                          size="2x"
+                          class="text-stone-600 hover:text-stone-900"
+                          :icon="['fas', 'pen-to-square']"
+                        /><span class="sr-only"
                           >,
                           {{
                             createFullName(
