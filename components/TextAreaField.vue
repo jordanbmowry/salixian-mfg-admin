@@ -17,7 +17,7 @@
       </p>
     </div>
     <p class="mt-3 text-sm leading-6 text-gray-600">
-      Notes regarding the customer.
+      {{ description }}
     </p>
   </div>
 </template>
@@ -31,12 +31,13 @@ interface Props {
   name: string;
   id: string;
   error?: string;
+  description?: string;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits(['update:modelValue']);
 
-const { label, modelValue, name, id, error } = toRefs(props);
+const { label, modelValue, name, id, error, description } = toRefs(props);
 
 const modelValueRef = ref<string>(modelValue.value || '');
 
