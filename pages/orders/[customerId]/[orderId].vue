@@ -51,7 +51,9 @@ onMounted(fetchAllData);
   />
   <TableLoader v-if="pageIsLoading" />
   <main v-else>
-    <h1 class="font-semibold leading-6 text-4xl pb-10">Order {{ orderId }}</h1>
+    <h1 class="font-semibold leading-6 text-4xl pb-10">
+      Order <span class="text-base">{{ orderId }}</span>
+    </h1>
     <header>
       <!-- Customer full name and address -->
       <div class="border-b border-stone-200 bg-white px-4 py-5 sm:px-6">
