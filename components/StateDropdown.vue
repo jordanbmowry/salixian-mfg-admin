@@ -1,11 +1,12 @@
 <template>
-  <div class="sm:col-span-full xl:sm:col-span-2">
+  <div>
     <label
       :for="inputId"
       class="block text-sm font-medium leading-6 text-gray-900"
     >
       {{ label }}
       <font-awesome-icon
+        v-if="required"
         class="text-red-500 ml-2"
         :icon="['fas', 'asterisk']"
       />
@@ -81,9 +82,7 @@
     </Listbox>
   </div>
 </template>
-
-<script setup>
-import { ref, defineProps, defineEmits, watch, computed, nextTick } from 'vue';
+<script setup lang="ts">
 import {
   Listbox,
   ListboxButton,
@@ -92,32 +91,34 @@ import {
 } from '@headlessui/vue';
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/vue/20/solid';
 
-const props = defineProps({
-  label: {
-    type: String,
-    required: true,
-  },
-  modelValue: {
-    type: String,
-    default: '',
-  },
-  error: String,
-  states: {
-    type: Array,
-    required: true,
-  },
+interface State {
+  name: string;
+  value: string;
+}
+
+interface Props {
+  required?: boolean;
+  label: string;
+  modelValue?: string;
+  error?: string;
+  states: State[];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  required: false,
+  modelValue: '',
 });
 
 const { modelValue, states } = toRefs(props);
 const emit = defineEmits(['update:modelValue']);
 
 const inputId = `state-dropdown-${Math.random().toString(36).substr(2, 9)}`;
-const defaultState = { name: '', value: '' };
-const selectedState = ref(
+const defaultState: State = { name: '', value: '' };
+const selectedState: Ref<State> = ref(
   states.value.find((s) => s.value === modelValue.value) || defaultState
 );
 const searchQuery = ref('');
-const hiddenInput = ref(null);
+const hiddenInput = ref<HTMLInputElement | null>(null);
 
 const filteredStates = computed(() => {
   if (!searchQuery.value) return states.value;
@@ -128,13 +129,13 @@ const filteredStates = computed(() => {
 
 const focusHiddenInput = () => {
   nextTick(() => {
-    hiddenInput.value.focus();
+    hiddenInput.value?.focus();
   });
 };
 
-const updateSelectedState = (newState) => {
+const updateSelectedState = (newState: State) => {
   selectedState.value = newState;
-  emit('update:modelValue', selectedState.value);
+  emit('update:modelValue', newState.value);
   searchQuery.value = '';
 };
 
