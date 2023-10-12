@@ -100,7 +100,7 @@ const { value: order_description, errorMessage: orderDescriptionError } =
   useField<string>('order_description');
 
 const { value: customer_cost, errorMessage: customerCostError } =
-  useField<number>('customer_cost');
+  useField<string>('customer_cost');
 
 const { value: input_expenses, errorMessage: inputExpensesError } =
   useField<string>('input_expenses');
