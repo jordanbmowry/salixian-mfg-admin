@@ -100,6 +100,7 @@
             />
 
             <StateDropdown
+              :required="true"
               label="Shipping state"
               class="sm:col-span-full xl:sm:col-span-2"
               :modelValue="shipping_state"
