@@ -34,36 +34,43 @@ const validations = yup.object({
     .number()
     .transform((value, originalValue) => (originalValue === '' ? null : value))
     .required('Customer cost is required.')
-    .positive('Customer cost must be a positive number.')
+    .min(0, 'Customer cost must be a non-negative number.')
     .label('Customer cost'),
 
   input_expenses: yup
     .number()
     .transform((value, originalValue) => (originalValue === '' ? null : value))
-    .positive('Input expenses must be a positive number.')
+    .min(0, 'Input expenses must be a non-negative number.')
     .nullable()
     .label('Input expenses'),
 
   shipping_cost: yup
     .number()
     .transform((value, originalValue) => (originalValue === '' ? null : value))
-    .positive('Shipping cost must be a positive number.')
+    .min(0, 'Shipping cost must be a non-negative number.')
     .nullable()
     .label('Shipping cost'),
 
   taxes_fees: yup
     .number()
     .transform((value, originalValue) => (originalValue === '' ? null : value))
-    .positive('Taxes & Fees must be a positive number.')
+    .min(0, 'Taxes & Fees must be a non-negative number.')
     .nullable()
     .label('Taxes & Fees'),
 
   total_write_off: yup
     .number()
     .transform((value, originalValue) => (originalValue === '' ? null : value))
-    .positive('Total write off must be a positive number.')
+    .min(0, 'Total write off must be a non-negative number.')
     .nullable()
     .label('Total write off'),
+
+  profit: yup
+    .number()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
+    .min(0, 'Profit must be a non-negative number.')
+    .nullable()
+    .label('Profit'),
 
   order_status: yup
     .string()
@@ -106,6 +113,8 @@ const { value: taxes_fees, errorMessage: taxesFeesError } =
 
 const { value: total_write_off, errorMessage: totalWriteOffError } =
   useField<string>('total_write_off');
+
+const { value: profit, errorMessage: profitError } = useField<string>('profit');
 
 const { value: order_status, errorMessage: orderStatusError } =
   useField<string>('order_status');
@@ -172,7 +181,7 @@ const handleCreateOrder = handleSubmit(async (formData) => {
   try {
     isSubmitting.value = true;
     const { error } = await useFetch(`${baseUrl}/orders`, {
-      method: 'PUT',
+      method: 'POST',
       body: {
         data,
       },
@@ -346,6 +355,18 @@ const handleConfirmCreateOrder = () => {
               prefix="$"
               suffix="USD"
               :error="totalWriteOffError"
+            />
+
+            <MonetaryInputField
+              class="sm:col-span-3"
+              label="Profit"
+              v-model="profit"
+              name="profit"
+              id="profit"
+              placeholder="0.00"
+              prefix="$"
+              suffix="USD"
+              :error="profitError"
             />
 
             <TextAreaField
