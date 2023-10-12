@@ -26,7 +26,7 @@ const isMoreOrdersLoading = ref(false);
 const isErrorShowing = ref(false);
 
 const buildUrl = () =>
-  `/customers/${customerId}/orders?page=${currentPage.value}&pageSize=${pageSize.value}&sortBy=updated_at&order=desc`;
+  `/customers/${customerId}/orders?page=${currentPage.value}&pageSize=${pageSize.value}&orderBy=updated_at&order=desc`;
 
 const url = computed(buildUrl);
 

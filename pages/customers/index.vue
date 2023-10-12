@@ -247,7 +247,7 @@ const search = ref('');
 const selectedDates = ref([]);
 
 const buildUrl = () => {
-  let url = `/customers?page=${currentPage.value}&size=${pageSize.value}&sortBy=updated_at&order=desc`;
+  let url = `/customers?page=${currentPage.value}&size=${pageSize.value}&orderBy=updated_at&order=desc`;
   if (search.value) {
     url += `&${selected.value.value}=${search.value}`;
   }
