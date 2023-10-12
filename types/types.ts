@@ -32,6 +32,7 @@ export interface Customer {
 }
 
 export interface Order {
+  customer_id: string;
   order_id: string;
   order_date: string;
   order_description: string;
