@@ -23,8 +23,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs, watch } from 'vue';
-
 interface Props {
   label: string;
   modelValue: string | undefined;

@@ -40,8 +40,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue';
-
 const props = defineProps({
   currentPage: {
     type: Number,
