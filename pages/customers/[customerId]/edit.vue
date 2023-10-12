@@ -111,6 +111,7 @@
             />
 
             <StateDropdown
+              :required="true"
               label="Shipping state"
               class="sm:col-span-full xl:sm:col-span-2"
               :modelValue="shipping_state"
@@ -288,12 +289,13 @@ import {
 import * as yup from 'yup';
 import { useField, useForm } from 'vee-validate';
 import { STATES } from '~/data/states';
+import { Customer, ConfimationModalState } from '~/types/types';
 
 const route = useRoute();
 
 const customerId = route.params.customerId;
 const isConfirmationModalOpen = ref(false);
-const confimationModalState = ref({});
+const confimationModalState = ref<ConfimationModalState | {}>({});
 const useShippingForBilling = ref(false);
 const isSubmitting = ref(false);
 const isErrorShowing = ref(false);
@@ -393,29 +395,34 @@ const { value: shipping_zip, errorMessage: shippingZipError } =
   useField<string>('shipping_zip', {
     initialValue: '',
   });
-const { value: billing_address, errorMessage: billingAddressError } =
-  useField<string>('billing_address', {
-    initialValue: '',
-  });
-const { value: billing_city, errorMessage: billingCityError } =
-  useField<string>('billing_city', {
-    initialValue: '',
-  });
-const { value: billing_state, errorMessage: billingStateError } =
-  useField<string>('billing_state', {
-    initialValue: '',
-  });
-const { value: billing_zip, errorMessage: billingZipError } = useField<string>(
-  'billing_zip',
+const { value: billing_address, errorMessage: billingAddressError } = useField<
+  string | null
+>('billing_address', {
+  initialValue: '',
+});
+const { value: billing_city, errorMessage: billingCityError } = useField<
+  string | null
+>('billing_city', {
+  initialValue: '',
+});
+const { value: billing_state, errorMessage: billingStateError } = useField<
+  string | null
+>('billing_state', {
+  initialValue: '',
+});
+const { value: billing_zip, errorMessage: billingZipError } = useField<
+  string | null
+>('billing_zip', {
+  initialValue: '',
+});
+const { value: notes, errorMessage: notesError } = useField<string | null>(
+  'notes',
   {
     initialValue: '',
   }
 );
-const { value: notes, errorMessage: notesError } = useField<string>('notes', {
-  initialValue: '',
-});
 
-function findStateByValue(value: string) {
+function findStateByValue(value: string | null) {
   return states.value.find((s) => s.value === value) || states.value[0];
 }
 
@@ -424,7 +431,9 @@ const selectedBillingState = ref(findStateByValue(billing_state.value));
 
 onMounted(async () => {
   try {
-    const data = await useFetchWithCache(`/customers/${customerId}`);
+    const data = await useFetchWithCache<{ data: Customer }>(
+      `/customers/${customerId}`
+    );
 
     const {
       billing_address: billingAddress,
@@ -440,7 +449,7 @@ onMounted(async () => {
       shipping_city: shippingCity,
       shipping_state: shippingState,
       shipping_zip: shippingZip,
-    } = data.value.data;
+    } = data.value?.data;
 
     billing_address.value = billingAddress;
     billing_city.value = billingCity;
@@ -493,14 +502,58 @@ const handleUpdateCustomer = handleSubmit(async (formData) => {
   }
 });
 
-function handleSoftDeleteCustomer() {
-  // TODO# finish out this func
-  console.log('handleSoftDeleteCustomer');
+async function handleSoftDeleteCustomer() {
+  try {
+    isSubmitting.value = true;
+    const { error } = await useFetch(
+      `${baseUrl}/customers/soft-delete/${customerId}`,
+      {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: useRequestHeaders(['cookie']),
+      }
+    );
+
+    if (error.value) {
+      errorMessage.value = error.value?.data?.error;
+      // @ts-ignore
+      throw new Error(error.value?.data?.error);
+    }
+    sessionStorage.clear();
+    await navigateTo('/customers');
+  } catch (err) {
+    console.error(err);
+    isErrorShowing.value = true;
+  } finally {
+    isSubmitting.value = false;
+  }
 }
 
-function handleHardDeleteCustomer() {
-  // TODO# finish out this func
-  console.log('handleHardDeleteCustomer');
+async function handleHardDeleteCustomer() {
+  try {
+    isSubmitting.value = true;
+    const { error } = await useFetch(
+      `${baseUrl}/customers/hard-delete/${customerId}`,
+      {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: useRequestHeaders(['cookie']),
+      }
+    );
+
+    if (error.value) {
+      errorMessage.value = error.value?.data?.error;
+      // @ts-ignore
+      throw new Error(error.value?.data?.error);
+    }
+    sessionStorage.clear();
+    await navigateTo('/customers');
+  } catch (err) {
+    console.error(err);
+    isErrorShowing.value = true;
+  } finally {
+    isSubmitting.value = false;
+  }
 }
 
 function formatToPhoneNumber(value: string) {
@@ -554,7 +607,6 @@ function createStateUpdater(
   stateObjRef: Ref<State>
 ) {
   return (newState: State) => {
-    console.log(newState);
     stateValueRef.value = newState.value;
     stateObjRef.value = newState;
   };
