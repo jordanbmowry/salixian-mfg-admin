@@ -1,12 +1,16 @@
 import { defineStore } from 'pinia';
 
+export enum Role {
+  USER = 'user',
+  ADMIN = 'admin',
+}
+
 export interface User {
   user_id: string | null;
   email: string | null;
-  role: string | null;
+  role: Role | null;
   first_name: string | null;
   last_name: string | null;
-
   last_login: Date | null;
   created_at: Date | null;
   updated_at: Date | null;
