@@ -471,7 +471,7 @@ onMounted(async () => {
   } catch (error) {
     isErrorShowing.value = true;
     errorMessage.value = `Failed to fetch cusomer data`;
-    console.log(error);
+    console.error(error);
   }
 });
 

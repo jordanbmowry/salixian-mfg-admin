@@ -236,7 +236,7 @@ onMounted(async () => {
   } catch (error) {
     isErrorShowing.value = true;
     errorMessage.value = `Failed to fetch data`;
-    console.log(error);
+    console.error(error);
   }
 });
 

@@ -60,7 +60,6 @@ const userNavigation = ref([
   {
     name: 'Your profile',
     func: async () => {
-      console.log('clicked');
       await navigateTo(`/users/${userStore.user_id}`);
     },
     icon: ['fas', 'user'],

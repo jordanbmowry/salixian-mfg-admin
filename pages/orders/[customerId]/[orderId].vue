@@ -30,7 +30,7 @@ const fetchAllData = async () => {
     customerData.value = fetchedCustomer.value.data;
     orderData.value = fetchedOrder.value.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     isErrorShowing.value = true;
     console.error('Error fetching the data: ', error);
   } finally {

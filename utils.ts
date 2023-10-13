@@ -57,6 +57,5 @@ export function paymentStatusClass(status: string) {
 }
 
 export function stripDashesFromPhoneNumber(phoneNumber: string = '') {
-  console.log(phoneNumber);
   return phoneNumber.replace(/-/g, '');
 }
