@@ -1,12 +1,4 @@
 <script setup>
-const userStore = useUserStore();
-const baseURL = useRuntimeConfig().public.baseURL;
-
-const displayName =
-  userStore.first_name && userStore.last_name
-    ? `${userStore.first_name} ${userStore.last_name}`
-    : userStore.email;
-
 import {
   Dialog,
   DialogPanel,
@@ -21,6 +13,14 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline';
 import { ChevronDownIcon } from '@heroicons/vue/20/solid';
 import { useUserStore } from '~/stores/userStore';
 
+const userStore = useUserStore();
+const baseURL = useRuntimeConfig().public.baseURL;
+
+const displayName =
+  userStore.first_name && userStore.last_name
+    ? `${userStore.first_name} ${userStore.last_name}`
+    : userStore.email;
+
 const navigation = ref([
   {
     name: 'Dashboard',
@@ -32,17 +32,20 @@ const navigation = ref([
     href: '/customers',
     icon: ['fas', 'handshake'],
   },
-
   {
     name: 'Orders',
     href: '/orders',
     icon: ['fas', 'money-bill'],
   },
-  {
-    name: 'Users',
-    href: '/users',
-    icon: ['fas', 'users'],
-  },
+  ...(userStore.role === 'admin'
+    ? [
+        {
+          name: 'Users',
+          href: '/users',
+          icon: ['fas', 'users'],
+        },
+      ]
+    : []),
 ]);
 
 const route = useRoute();
@@ -136,7 +139,6 @@ const sidebarOpen = ref(false);
                   </button>
                 </div>
               </TransitionChild>
-              <!-- Sidebar component, swap this element with another sidebar if you like -->
               <div
                 class="flex grow flex-col gap-y-5 overflow-y-auto bg-stone-500 px-6 pb-4"
               >
