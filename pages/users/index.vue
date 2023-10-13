@@ -3,7 +3,6 @@ import { useUserStore } from '~/stores/userStore';
 import { User } from '~/stores/userStore';
 import { formatDate } from '~/utils';
 
-const userStore = useUserStore();
 const usersData = ref([]);
 
 async function navigateToUser(user_id: string) {
@@ -154,3 +153,10 @@ definePageMeta({
     <TableLoader v-else />
   </main>
 </template>
+
+<style scoped>
+tr.cursor-pointer:hover {
+  transform: scale(1.01);
+  transition: all 0.6s;
+}
+</style>
