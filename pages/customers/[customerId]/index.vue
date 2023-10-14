@@ -264,7 +264,11 @@ const handleUpdateCurrentPage = (newCurrentPage: number) => {
         <div
           v-for="order in orderData"
           :key="order.order_id"
-          class="border rounded-lg my-4 p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
+          class="border rounded-lg my-4 p-6 shadow-sm hover:shadow-md transition-shadow duration-200 bg-gray-50"
+          @click="
+            async () =>
+              await navigateTo(`/orders/${customerId}/${order.order_id}`)
+          "
         >
           <!-- Order Description -->
           <div class="mb-4">
@@ -377,7 +381,10 @@ const handleUpdateCurrentPage = (newCurrentPage: number) => {
           <tr
             v-for="order in orderData"
             :key="order.order_id"
-            @click="async () => await navigateTo(`/orders/${order.order_id}`)"
+            @click="
+              async () =>
+                await navigateTo(`/orders/${customerId}/${order.order_id}`)
+            "
             class="cursor-pointer"
           >
             <td class="hidden py-4 px-4 sm:table-cell sm:pr-8">
