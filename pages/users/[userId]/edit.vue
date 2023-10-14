@@ -108,6 +108,10 @@ const handleUpdateUser = handleSubmit(async (formData) => {
     delete data?.password;
   }
 
+  if (userStore.role !== 'admin') {
+    delete data?.role;
+  }
+
   try {
     isSubmitting.value = true;
     const { error } = await useFetch(`${baseUrl}/users/${userId}`, {
@@ -299,6 +303,7 @@ definePageMeta({
             />
 
             <StateDropdown
+              v-if="userStore.role === 'admin'"
               :required="true"
               label="User Role"
               class="sm:col-span-full xl:sm:col-span-2"
@@ -356,6 +361,7 @@ definePageMeta({
           </button>
         </div>
         <div
+          v-if="userStore.role === 'admin'"
           class="bg-red-100 shadow-sm ring-1 ring-red-900/5 rounded md:col-span-2 border border-red-600"
         >
           <div class="bg-white px-4 py-5 sm:px-6">
