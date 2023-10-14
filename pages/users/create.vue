@@ -1,7 +1,9 @@
 <script setup>
 const route = useRoute();
 
-console.log(route.params.userId);
+definePageMeta({
+  middleware: ['check-admin'],
+});
 </script>
 
 <template>
