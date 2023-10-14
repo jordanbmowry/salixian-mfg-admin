@@ -147,5 +147,14 @@ definePageMeta({
         </p>
       </div>
     </section>
+    <section
+      v-if="userData.notes"
+      class="my-4 flex flex-col items-center bg-gray-50 rounded-sm py-4"
+    >
+      <h2>User Notes</h2>
+      <p class="text-base break-words text-stone-500">
+        {{ userData.notes }}
+      </p>
+    </section>
   </main>
 </template>

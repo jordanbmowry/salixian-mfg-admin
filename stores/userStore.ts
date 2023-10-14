@@ -14,6 +14,7 @@ export interface User {
   last_login: Date | null;
   created_at: Date | null;
   updated_at: Date | null;
+  notes: string | null;
   isAuthenticated: boolean;
 }
 
