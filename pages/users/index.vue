@@ -3,7 +3,7 @@ import { useUserStore } from '~/stores/userStore';
 import { User } from '~/stores/userStore';
 import { formatDate } from '~/utils';
 
-const usersData = ref([]);
+const usersData = ref<User[] | []>([]);
 
 async function navigateToUser(user_id: string) {
   await navigateTo(`/users/${user_id}`);
@@ -44,9 +44,19 @@ definePageMeta({
 </script>
 
 <template>
-  <main>
+  <main class="px-4 sm:px-6 lg:px-8">
     <h1 class="font-semibold leading-6 text-4xl pb-10">Users</h1>
-    <div v-if="usersData.length" class="px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-end">
+      <NuxtLink
+        to="/users/create"
+        type="submit"
+        class="rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600"
+      >
+        Create user
+      </NuxtLink>
+    </div>
+
+    <div v-if="usersData.length">
       <div class="mt-4 flow-root">
         <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div
