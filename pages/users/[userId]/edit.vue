@@ -129,7 +129,9 @@ const handleUpdateUser = handleSubmit(async (formData) => {
       throw new Error(error.value?.data?.error);
     }
     sessionStorage.clear();
-    await navigateTo('/users');
+    userStore.role === 'admin'
+      ? await navigateTo('/users')
+      : await navigateTo('/');
   } catch (err) {
     console.error(err);
     isErrorShowing.value = true;
