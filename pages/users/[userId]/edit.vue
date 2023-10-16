@@ -15,6 +15,7 @@ const isSubmitting = ref(false);
 const baseUrl = useRuntimeConfig().public.baseURL;
 const { userId } = route.params;
 const userStore = useUserStore();
+const userData = ref({});
 
 const validations = yup.object({
   first_name: yup.string().trim().label('First name'),
@@ -76,6 +77,7 @@ const { value: notes, errorMessage: notesError } = useField<string>('notes');
 async function fetchData(url: string) {
   try {
     const data = await useFetchWithCache<{ data: Partial<User> }>(url);
+    userData.value = data.value.data;
     const {
       first_name: fetchedFirstName,
       last_name: fetchedLastName,
@@ -364,7 +366,7 @@ definePageMeta({
           </button>
         </div>
         <div
-          v-if="userStore.role === 'admin'"
+          v-if="userStore.role === 'admin' && userData.role !== 'admin'"
           class="bg-red-100 shadow-sm ring-1 ring-red-900/5 rounded md:col-span-2 border border-red-600"
         >
           <div class="bg-white px-4 py-5 sm:px-6">
