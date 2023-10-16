@@ -64,19 +64,24 @@ onMounted(fetchAllData);
           Customer details and information.
         </p>
       </div>
-      <div class="flex items-center gap-4">
-        <NuxtLink
-          class="flex w-full justify-center rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600"
-          :to="`/customers/${customerId}`"
-        >
-          <font-awesome-icon :icon="['fas', 'binoculars']" size="2x" />
-        </NuxtLink>
-        <NuxtLink
-          class="flex w-full justify-center rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600"
-          :to="`/customers/${customerId}/edit`"
-        >
-          <font-awesome-icon :icon="['fas', 'pen-to-square']" size="2x" />
-        </NuxtLink>
+      <div class="flex flex-col items-center">
+        <div class="flex flex-col items-center w-full">
+          <span>View/Edit Customer</span>
+          <div class="flex items-center gap-4 w-full">
+            <NuxtLink
+              class="flex-1 flex w-full justify-center rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600"
+              :to="`/customers/${customerId}`"
+            >
+              <font-awesome-icon :icon="['fas', 'binoculars']" size="2x" />
+            </NuxtLink>
+            <NuxtLink
+              class="flex-1 flex w-full justify-center rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600"
+              :to="`/customers/${customerId}/edit`"
+            >
+              <font-awesome-icon :icon="['fas', 'pen-to-square']" size="2x" />
+            </NuxtLink>
+          </div>
+        </div>
       </div>
     </div>
     <div class="mt-6 border-t border-gray-300">
@@ -181,13 +186,16 @@ onMounted(fetchAllData);
           Order Details and information.
         </p>
       </div>
-      <div class="flex items-center">
-        <NuxtLink
-          class="flex w-full justify-center rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600"
-          :to="`/orders/${orderId}/edit`"
-        >
-          <font-awesome-icon :icon="['fas', 'pen-to-square']" size="2x" />
-        </NuxtLink>
+      <div class="flex items-center w-full">
+        <div class="flex flex-col items-center w-full">
+          <span>Edit Order</span>
+          <NuxtLink
+            class="flex-1 flex w-full justify-center rounded-md bg-stone-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600"
+            :to="`/orders/${orderId}/edit`"
+          >
+            <font-awesome-icon :icon="['fas', 'pen-to-square']" size="2x" />
+          </NuxtLink>
+        </div>
       </div>
     </div>
     <dl class="divide-y divide-gray-300">
