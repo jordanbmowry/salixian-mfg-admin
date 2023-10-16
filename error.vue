@@ -18,15 +18,3 @@ const template = computed(() => {
 <template>
   <component :is="template" />
 </template>
-
-<style>
-html,
-body,
-#__nuxt,
-#__layout {
-  height: 100vh;
-  height: 100dvh;
-  width: 100vw;
-  width: 100dvw;
-}
-</style>
