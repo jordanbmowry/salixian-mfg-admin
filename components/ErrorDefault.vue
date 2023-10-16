@@ -9,7 +9,10 @@ const handleError = () => {
 </script>
 
 <template>
-  <main id="error-page" class="relative isolate min-h-full bg-stone-900">
+  <main
+    id="error-page"
+    class="absolute top-0 bottom-0 right-0 left-0 isolate min-h-full bg-stone-900"
+  >
     <div class="mx-auto max-w-7xl px-6 py-32 text-center sm:py-40 lg:px-8">
       <font-awesome-icon
         :icon="['fas', 'triangle-exclamation']"
