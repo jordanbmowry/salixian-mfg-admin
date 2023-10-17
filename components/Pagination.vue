@@ -40,6 +40,8 @@
 </template>
 
 <script setup lang="ts">
+import { defineProps, defineEmits } from 'vue';
+
 const props = defineProps({
   currentPage: {
     type: Number,
@@ -63,21 +65,19 @@ const props = defineProps({
   },
 });
 
-const currentPage = ref(props.currentPage);
-
 const emit = defineEmits(['update:currentPage']);
 
 const handlePrev = (event: MouseEvent): void => {
-  if (currentPage.value > 1) {
-    currentPage.value -= 1;
-    emit('update:currentPage', currentPage.value);
+  if (props.currentPage > 1) {
+    const newPage = props.currentPage - 1;
+    emit('update:currentPage', newPage);
   }
 };
 
 const handleNext = (event: MouseEvent): void => {
-  if (currentPage.value < props.totalPages) {
-    currentPage.value += 1;
-    emit('update:currentPage', currentPage.value);
+  if (props.currentPage < props.totalPages) {
+    const newPage = props.currentPage + 1;
+    emit('update:currentPage', newPage);
   }
 };
 </script>
