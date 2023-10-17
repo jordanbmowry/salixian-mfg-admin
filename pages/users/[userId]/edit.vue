@@ -206,7 +206,7 @@ async function handleDeleteUser() {
       credentials: 'include',
       headers: useRequestHeaders(['cookie']),
     });
-    await navigateTo('/login');
+    await navigateTo('/users');
   } catch (err) {
     console.error(err);
     isErrorShowing.value = true;
