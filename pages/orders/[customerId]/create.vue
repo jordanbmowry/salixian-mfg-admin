@@ -3,6 +3,7 @@ import { ORDER_STATUS } from '~/data/orderStatus';
 import { PAYMENT_STATUS } from '~/data/paymentStatus';
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
+import { formatDate } from '~/utils';
 
 const route = useRoute();
 const baseUrl = useRuntimeConfig().public.baseURL;
@@ -245,7 +246,7 @@ const handleConfirmCreateOrder = () => {
           {{ customerData.last_name }}
         </h2>
         <p class="mt-1 text-sm leading-6 text-gray-600">
-          New customer order will be stored in the database.
+          New order for customer will be stored in the database.
         </p>
       </div>
 
@@ -258,6 +259,12 @@ const handleConfirmCreateOrder = () => {
             class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"
           >
             <div class="sm:col-span-3 self-end">
+              <p v-if="order_date" class="text-sm">
+                Order date:
+                <span class="font-bold">{{
+                  formatDate(order_date.toString())
+                }}</span>
+              </p>
               <DatePicker type="date" v-model="order_date" label="Order date" />
               <p v-if="orderDateError" class="text-red-600 text-sm m-0 p-0">
                 {{ orderDateError }}

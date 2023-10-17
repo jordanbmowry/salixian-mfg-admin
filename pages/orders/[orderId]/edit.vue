@@ -4,6 +4,7 @@ import { useField, useForm } from 'vee-validate';
 import { ORDER_STATUS } from '~/data/orderStatus';
 import { PAYMENT_STATUS } from '~/data/paymentStatus';
 import * as yup from 'yup';
+import { formatDate } from '~/utils';
 
 const route = useRoute();
 const baseUrl = useRuntimeConfig().public.baseURL;
@@ -12,12 +13,12 @@ const orderId = route.params.orderId;
 const orderStatus = ref(ORDER_STATUS);
 const paymentStatus = ref(PAYMENT_STATUS);
 const isLoading = ref(false);
-const customerData = ref({});
+const customerData = ref<Customer | {}>({});
 const isErrorShowing = ref(false);
 const confimationModalState = ref<ConfimationModalState | {}>({});
 const errorMessage = ref('');
 const isSubmitting = ref(false);
-const customerId = ref<string>('');
+
 const isConfirmationModalOpen = ref(false);
 
 const validations = yup.object({
@@ -162,12 +163,12 @@ const fetchCustomerData = async (url: string) => {
 const handleUpdateOrder = handleSubmit(async (formData) => {
   const data = {
     ...formData,
-    customer_id: customerId.value,
+    customer_id: customerData.value?.customer_id,
   };
   try {
     isSubmitting.value = true;
     const { error } = await useFetch(`${baseUrl}/orders/${orderId}`, {
-      method: 'POST',
+      method: 'PUT',
       body: {
         data,
       },
@@ -375,6 +376,12 @@ const handleConfirmHardDelete = () => {
             class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"
           >
             <div class="sm:col-span-3 self-end">
+              <p class="text-sm">
+                Order date:
+                <span class="font-bold">{{
+                  formatDate(order_date.toString())
+                }}</span>
+              </p>
               <DatePicker type="date" v-model="order_date" label="Order date" />
               <p v-if="orderDateError" class="text-red-600 text-sm m-0 p-0">
                 {{ orderDateError }}
