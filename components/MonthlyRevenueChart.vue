@@ -28,8 +28,8 @@ watchEffect(() => {
       {
         label: 'Monthly Revenues',
         data: props.monthlyRevenueData.revenues,
-        backgroundColor: 'rgba(144, 238, 144, 0.2)', // Light green background color
-        borderColor: 'rgba(0, 128, 0, 1)', // Dark green border color
+        backgroundColor: 'rgba(144, 238, 144, 0.2)',
+        borderColor: 'rgba(0, 128, 0, 1)',
         borderWidth: 1,
       },
     ],
