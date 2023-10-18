@@ -3,12 +3,12 @@
     <ConfirmationModal
       v-if="isConfirmationModalOpen"
       :show="isConfirmationModalOpen"
-      @confirm="confimationModalState.confirm"
+      @confirm="confirmationModalConfirmMethod"
       @update:open="isConfirmationModalOpen = $event"
-      :dangerMode="confimationModalState.dangerMode"
-      :heading="confimationModalState.heading"
-      :message="confimationModalState.message"
-      :confirmButtonText="confimationModalState.confirmButtonText"
+      :dangerMode="confirmationModalDangerMode"
+      :heading="confirmationModalHeading"
+      :message="confirmationModalMessage"
+      :confirmButtonText="confirmationModalConfirmButtonText"
     />
 
     <NotificationToast
@@ -395,26 +395,25 @@ const { value: shipping_zip, errorMessage: shippingZipError } =
   useField<string>('shipping_zip', {
     initialValue: '',
   });
-const { value: billing_address, errorMessage: billingAddressError } = useField<
-  string | null
->('billing_address', {
-  initialValue: '',
-});
-const { value: billing_city, errorMessage: billingCityError } = useField<
-  string | null
->('billing_city', {
-  initialValue: '',
-});
-const { value: billing_state, errorMessage: billingStateError } = useField<
-  string | null
->('billing_state', {
-  initialValue: '',
-});
-const { value: billing_zip, errorMessage: billingZipError } = useField<
-  string | null
->('billing_zip', {
-  initialValue: '',
-});
+const { value: billing_address, errorMessage: billingAddressError } =
+  useField<string>('billing_address', {
+    initialValue: '',
+  });
+const { value: billing_city, errorMessage: billingCityError } =
+  useField<string>('billing_city', {
+    initialValue: '',
+  });
+const { value: billing_state, errorMessage: billingStateError } =
+  useField<string>('billing_state', {
+    initialValue: '',
+  });
+const { value: billing_zip, errorMessage: billingZipError } = useField<string>(
+  'billing_zip',
+  {
+    initialValue: '',
+  }
+);
+
 const { value: notes, errorMessage: notesError } = useField<string | null>(
   'notes',
   {
@@ -451,10 +450,10 @@ onMounted(async () => {
       shipping_zip: shippingZip,
     } = data.value?.data;
 
-    billing_address.value = billingAddress;
-    billing_city.value = billingCity;
-    billing_state.value = billingState;
-    billing_zip.value = billingZip;
+    billing_address.value = billingAddress || '';
+    billing_city.value = billingCity || '';
+    billing_state.value = billingState || '';
+    billing_zip.value = billingZip || '';
     email.value = currentEmail;
     first_name.value = firstName;
     last_name.value = lastName;
@@ -656,4 +655,39 @@ const handleConfirmHardDelete = () => {
 
   isConfirmationModalOpen.value = true;
 };
+
+const confirmationModalConfirmMethod = computed(() => {
+  if ('confirm' in confimationModalState.value) {
+    return confimationModalState.value.confirm;
+  }
+  return () => {};
+});
+
+const confirmationModalDangerMode = computed(() => {
+  if ('dangerMode' in confimationModalState.value) {
+    return confimationModalState.value.dangerMode;
+  }
+  return false;
+});
+
+const confirmationModalHeading = computed(() => {
+  if ('heading' in confimationModalState.value) {
+    return confimationModalState.value.heading;
+  }
+  return '';
+});
+
+const confirmationModalMessage = computed(() => {
+  if ('message' in confimationModalState.value) {
+    return confimationModalState.value.message;
+  }
+  return '';
+});
+
+const confirmationModalConfirmButtonText = computed(() => {
+  if ('confirmButtonText' in confimationModalState.value) {
+    return confimationModalState.value.confirmButtonText;
+  }
+  return '';
+});
 </script>

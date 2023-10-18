@@ -221,6 +221,7 @@
 
 <script setup lang="ts">
 import { formatPhoneNumber, formatDate } from '~/utils';
+import { ApiCutomersResponse } from '~/types/types';
 
 import { useDebounceFn } from '@vueuse/core';
 import {
@@ -240,7 +241,18 @@ const searchBy = [
 
 const selected = ref(searchBy[0]);
 
-const apiData = ref({});
+const apiData = ref<ApiCutomersResponse>({
+  message: '',
+  data: [],
+  meta: {
+    currentPage: 0,
+    totalPages: 0,
+    pageSize: 0,
+    totalCount: 0,
+  },
+  status: '',
+});
+
 const currentPage = ref(1);
 const pageSize = ref(10);
 const search = ref('');
@@ -262,7 +274,7 @@ const url = computed(buildUrl);
 
 const fetchData = async () => {
   try {
-    const data = await useFetchWithCache(url.value);
+    const data = await useFetchWithCache<ApiCutomersResponse>(url.value);
     apiData.value = data.value;
   } catch (error) {
     console.error('Error fetching the data: ', error);

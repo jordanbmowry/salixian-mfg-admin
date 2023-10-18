@@ -13,20 +13,24 @@ interface PaginationData {
   totalPages: number;
   totalCount: number;
 }
-
-const pageIsLoading = ref(false);
 const route = useRoute();
-const customerId = route.params.customerId;
-const currentPage = ref(1);
-const pageSize = ref(5);
-const customerData = ref({});
-const orderData = ref([]);
+
+const customerIdValue = Array.isArray(route.params.customerId)
+  ? route.params.customerId[0]
+  : route.params.customerId;
+
+const pageIsLoading = ref<boolean>(false);
+const customerId = ref<string | number | null>(customerIdValue);
+const currentPage = ref<number>(1);
+const pageSize = ref<number>(5);
+const customerData = ref<any>({});
+const orderData = ref<Array<any>>([]);
 const paginationData = ref<PaginationData | {}>({});
 const isMoreOrdersLoading = ref(false);
 const isErrorShowing = ref(false);
 
 const buildUrl = () =>
-  `/customers/${customerId}/orders?page=${currentPage.value}&pageSize=${pageSize.value}&orderBy=updated_at&order=desc`;
+  `/customers/${customerId.value}/orders?page=${currentPage.value}&pageSize=${pageSize.value}&orderBy=updated_at&order=desc`;
 
 const url = computed(buildUrl);
 

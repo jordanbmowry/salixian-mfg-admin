@@ -25,7 +25,7 @@
 <script setup lang="ts">
 interface Props {
   label: string;
-  modelValue: string | undefined;
+  modelValue: string | undefined | null;
   name: string;
   id: string;
   error?: string;

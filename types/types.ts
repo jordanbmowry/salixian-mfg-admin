@@ -11,24 +11,41 @@ export enum PaymentStatus {
   FULLY_PAID = 'fully paid',
 }
 
-export interface Customer {
+interface Address {
+  shipping_address: string;
+  shipping_city: string;
+  shipping_state: string;
+  shipping_zip: string;
+  billing_address: string;
+  billing_city: string;
+  billing_state: string;
+  billing_zip: string;
+}
+
+export interface Customer extends Address {
   customer_id: string;
   first_name: string;
   last_name: string;
   email: string;
   phone_number: string;
-  shipping_address: string;
-  shipping_city: string;
-  shipping_state: string;
-  shipping_zip: string;
-  billing_address: string | null;
-  billing_city: string | null;
-  billing_state: string | null;
-  billing_zip: string | null;
-  notes: string | null;
+  notes: string;
   created_at: string;
   updated_at: string;
-  deleted_at: string | null;
+  deleted_at: null | string;
+}
+
+interface Meta {
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
+  totalCount: number;
+}
+
+export interface ApiCutomersResponse {
+  message: string;
+  data: Customer[];
+  meta: Meta;
+  status: string;
 }
 
 export interface Order {
