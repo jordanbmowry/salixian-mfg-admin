@@ -7,13 +7,60 @@ import {
   paymentStatusClass,
   formatMoney,
 } from '~/utils';
+import {
+  ApiCustomerResponse,
+  ApiOrderResponse,
+  OrderStatus,
+  PaymentStatus,
+  Order,
+  Customer,
+} from '~/types/types';
+
 const route = useRoute();
+
+const defaultCustomerData = {
+  customer_id: '',
+  first_name: '',
+  last_name: '',
+  email: '',
+  phone_number: '',
+  shipping_address: '',
+  shipping_city: '',
+  shipping_state: '',
+  shipping_zip: '',
+  billing_address: '',
+  billing_city: '',
+  billing_state: '',
+  billing_zip: '',
+  notes: '',
+  created_at: '',
+  updated_at: '',
+  deleted_at: null,
+};
+
+const defaultOrderData = {
+  order_id: '',
+  order_date: '',
+  order_description: '',
+  customer_cost: '',
+  input_expenses: null,
+  taxes_fees: null,
+  shipping_cost: null,
+  total_write_off: null,
+  profit: null,
+  notes: null,
+  order_status: OrderStatus.PENDING,
+  payment_status: PaymentStatus.NOT_PAID,
+  customer_id: '',
+  created_at: '',
+  updated_at: '',
+};
 
 const pageIsLoading = ref(false);
 const customerId = route.params.customerId;
 const orderId = route.params.orderId;
-const customerData = ref({});
-const orderData = ref({});
+const customerData = ref<Partial<Customer>>(defaultCustomerData);
+const orderData = ref<Partial<Order>>(defaultOrderData);
 const isErrorShowing = ref(false);
 
 const fetchCustomerUrl = `/customers/${customerId}`;
@@ -23,12 +70,15 @@ const fetchAllData = async () => {
   pageIsLoading.value = true;
   try {
     const [fetchedCustomer, fetchedOrder] = await Promise.all([
-      useFetchWithCache(fetchCustomerUrl),
-      useFetchWithCache(fetchOrderUrl),
+      useFetchWithCache<ApiCustomerResponse>(fetchCustomerUrl),
+      useFetchWithCache<ApiOrderResponse>(fetchOrderUrl),
     ]);
 
-    customerData.value = fetchedCustomer.value.data;
-    orderData.value = fetchedOrder.value.data;
+    customerData.value = {
+      ...defaultCustomerData,
+      ...fetchedCustomer.value.data,
+    };
+    orderData.value = { ...defaultOrderData, ...fetchedOrder.value.data };
   } catch (error) {
     console.error(error);
     isErrorShowing.value = true;
@@ -217,14 +267,14 @@ onMounted(fetchAllData);
         </dd>
       </div>
       <div
-        v-if="orderData.updated_at"
+        v-if="(orderData as any).updated_at"
         class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
       >
         <dt class="text-sm font-medium leading-6 text-gray-900">
           Last updated
         </dt>
         <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-          {{ formatDate(orderData.updated_at) }}
+          {{ formatDate((orderData as any).updated_at) }}
         </dd>
       </div>
       <div

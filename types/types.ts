@@ -96,3 +96,14 @@ export interface ApiAggregateStatsResponse {
   data: AggregateStatsData;
   message: string;
 }
+
+export interface ApiOrderResponse {
+  status: string;
+  data: Partial<Order>;
+  message: string;
+}
+
+export interface ApiCustomerResponse {
+  status: string;
+  data: Partial<Customer>;
+}
