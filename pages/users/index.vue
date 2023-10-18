@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { useUserStore } from '~/stores/userStore';
-import { User } from '~/stores/userStore';
 import { formatDate } from '~/utils';
+import { ApiUsersResponse, User } from '~/types/types';
 
 const usersData = ref<User[] | []>([]);
 
@@ -11,7 +10,7 @@ async function navigateToUser(user_id: string) {
 
 async function fetchData(url: string) {
   try {
-    const data = await useFetchWithCache<{ data: Partial<User>[] }>(url);
+    const data = await useFetchWithCache<ApiUsersResponse>(url);
 
     usersData.value = data.value.data;
   } catch (error) {

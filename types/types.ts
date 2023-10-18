@@ -11,6 +11,11 @@ export enum PaymentStatus {
   FULLY_PAID = 'fully paid',
 }
 
+export enum Role {
+  ADMIN = 'admin',
+  USER = 'user',
+}
+
 interface Address {
   shipping_address: string;
   shipping_city: string;
@@ -134,5 +139,23 @@ export interface ApiOrdersForCustomerResponse {
     customer: Customer;
   };
   meta: Meta;
+  message: string;
+}
+
+export interface User {
+  user_id: string;
+  email: string;
+  role: Role;
+  first_name: string | null;
+  last_name: string | null;
+  last_login: string;
+  created_at: string;
+  updated_at: string;
+  notes: string | null;
+}
+
+export interface ApiUsersResponse {
+  status: string;
+  data: User[];
   message: string;
 }
