@@ -1,18 +1,28 @@
 <script setup lang="ts">
-import { User } from '~/stores/userStore';
 import { formatDate } from '~/utils';
+import { ApiUserResponse, User, Role } from '~/types/types';
 
 const pageIsLoading = ref(false);
 const route = useRoute();
-const userData = ref<User | {}>({});
+const userData = ref<User>({
+  user_id: '',
+  email: '',
+  role: Role.USER,
+  first_name: null,
+  last_name: null,
+  last_login: '',
+  created_at: '',
+  updated_at: '',
+  notes: null,
+});
 const isErrorShowing = ref(false);
 const userId = route.params.userId;
 
 onMounted(async () => {
   pageIsLoading.value = true;
   try {
-    const data = await useFetchWithCache(`/users/${userId}`);
-    // @ts-ignore
+    const data = await useFetchWithCache<ApiUserResponse>(`/users/${userId}`);
+
     userData.value = data.value.data;
   } catch (error) {
     isErrorShowing.value = true;
