@@ -6,13 +6,8 @@ import {
   orderStatusClass,
   paymentStatusClass,
 } from '~/utils';
+import type { ApiOrdersForCustomerResponse, Meta } from '~/types/types';
 
-interface PaginationData {
-  currentPage: number;
-  pageSize: number;
-  totalPages: number;
-  totalCount: number;
-}
 const route = useRoute();
 
 const customerIdValue = Array.isArray(route.params.customerId)
@@ -25,7 +20,12 @@ const currentPage = ref<number>(1);
 const pageSize = ref<number>(5);
 const customerData = ref<any>({});
 const orderData = ref<Array<any>>([]);
-const paginationData = ref<PaginationData | {}>({});
+const paginationData = ref<Meta>({
+  currentPage: 0,
+  totalPages: 0,
+  pageSize: 0,
+  totalCount: 0,
+});
 const isMoreOrdersLoading = ref(false);
 const isErrorShowing = ref(false);
 
@@ -37,12 +37,11 @@ const url = computed(buildUrl);
 const fetchAllData = async () => {
   pageIsLoading.value = true;
   try {
-    const data = await useFetchWithCache(url.value);
-    // @ts-ignore
+    const data = await useFetchWithCache<ApiOrdersForCustomerResponse>(
+      url.value
+    );
     customerData.value = data.value.data?.customer;
-    // @ts-ignore
     paginationData.value = data.value?.meta;
-    // @ts-ignore
     orderData.value = data.value.data?.orders;
   } catch (error) {
     isErrorShowing.value = true;
@@ -55,10 +54,10 @@ const fetchOrderData = async () => {
   isMoreOrdersLoading.value = true;
 
   try {
-    const data = await useFetchWithCache(url.value);
-    // @ts-ignore
+    const data = await useFetchWithCache<ApiOrdersForCustomerResponse>(
+      url.value
+    );
     paginationData.value = data.value?.meta;
-    // @ts-ignore
     orderData.value = data.value.data?.orders;
   } catch (error) {
     isErrorShowing.value = true;
@@ -77,7 +76,6 @@ const computeEndItem = () => {
   return paginationData.value
     ? Math.min(
         currentPage.value * pageSize.value,
-        // @ts-ignore
         paginationData.value?.totalCount
       )
     : pageSize.value;

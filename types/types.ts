@@ -34,7 +34,7 @@ export interface Customer extends Address {
   deleted_at: null | string;
 }
 
-interface Meta {
+export interface Meta {
   currentPage: number;
   totalPages: number;
   pageSize: number;
@@ -103,7 +103,18 @@ export interface ApiOrderResponse {
   message: string;
 }
 
-export interface ApiCustomerResponse {
+export interface ApiCustomersResponse {
   status: string;
   data: Partial<Customer>;
+  message: string;
+}
+
+export interface ApiOrdersForCustomerResponse {
+  status: string;
+  data: {
+    orders: Order[];
+    customer: Customer;
+  };
+  meta: Meta;
+  message: string;
 }
