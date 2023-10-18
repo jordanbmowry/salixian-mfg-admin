@@ -413,22 +413,22 @@ const handleConfirmHardDelete = () => {
               :error="customerCostError"
             />
 
-            <StateDropdown
+            <SelectDropdown
               :required="true"
               label="Order status"
               class="sm:col-span-3"
               :modelValue="order_status"
-              :states="orderStatus"
+              :items="orderStatus"
               @update:modelValue="updateOrderStatus"
               :error="orderStatusError ?? ''"
             />
 
-            <StateDropdown
+            <SelectDropdown
               :required="true"
               label="Payment status"
               class="sm:col-span-3"
               :modelValue="payment_status"
-              :states="paymentStatus"
+              :items="paymentStatus"
               @update:modelValue="updatePaymentStatus"
               :error="paymentStatusError ?? ''"
             />

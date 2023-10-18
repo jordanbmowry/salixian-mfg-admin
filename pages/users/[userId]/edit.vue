@@ -272,6 +272,29 @@ definePageMeta({
             class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"
           >
             <InputField
+              class="sm:col-span-4"
+              required
+              label="Email"
+              v-model.trim="email"
+              type="email"
+              name="email"
+              id="email"
+              autocomplete="email"
+              :error="emailError"
+            />
+
+            <SelectDropdown
+              v-if="userStore.role === 'admin'"
+              :required="true"
+              label="User Role"
+              class="sm:col-span-full xl:sm:col-span-2"
+              :modelValue="role"
+              :items="userRoles"
+              @update:modelValue="updateUserRole"
+              :error="roleError ?? ''"
+            />
+
+            <InputField
               class="sm:col-span-3"
               label="First name"
               v-model.trim="first_name"
@@ -292,29 +315,6 @@ definePageMeta({
               id="last-name"
               autocomplete="family-name"
               :error="lastNameError"
-            />
-
-            <InputField
-              class="sm:col-span-4"
-              required
-              label="Email"
-              v-model.trim="email"
-              type="email"
-              name="email"
-              id="email"
-              autocomplete="email"
-              :error="emailError"
-            />
-
-            <StateDropdown
-              v-if="userStore.role === 'admin'"
-              :required="true"
-              label="User Role"
-              class="sm:col-span-full xl:sm:col-span-2"
-              :modelValue="role"
-              :states="userRoles"
-              @update:modelValue="updateUserRole"
-              :error="roleError ?? ''"
             />
 
             <InputField

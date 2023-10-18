@@ -110,12 +110,12 @@
               :error="shippingCityError"
             />
 
-            <StateDropdown
+            <SelectDropdown
               :required="true"
               label="Shipping state"
               class="sm:col-span-full xl:sm:col-span-2"
               :modelValue="shipping_state"
-              :states="states"
+              :items="states"
               @update:modelValue="updateShippingState"
               :error="shippingStateError ?? ''"
             />
@@ -186,11 +186,11 @@
               :error="billingCityError"
             />
 
-            <StateDropdown
+            <SelectDropdown
               label="Billing State"
               class="sm:col-span-full xl:sm:col-span-2"
               :modelValue="billing_state"
-              :states="states"
+              :items="states"
               @update:modelValue="updateBillingState"
               :error="billingStateError ?? ''"
             />

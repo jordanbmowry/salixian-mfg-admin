@@ -11,14 +11,14 @@
         :icon="['fas', 'asterisk']"
       />
     </label>
-    <Listbox as="div" v-model="selectedState">
+    <Listbox as="div" v-model="selectedItem">
       <div class="relative">
         <ListboxButton
           @click="focusHiddenInput"
           :id="inputId"
           class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
         >
-          <span class="block truncate">{{ selectedState.name }}</span>
+          <span class="block truncate">{{ selectedItem.name }}</span>
           <span
             class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
           >
@@ -45,11 +45,11 @@
             />
             <ListboxOption
               as="template"
-              v-for="state in filteredStates"
-              :key="state.value"
-              :value="state"
+              v-for="item in filteredItems"
+              :key="item.value"
+              :value="item"
               v-slot="{ active, selected }"
-              @click="updateSelectedState(state)"
+              @click="updateSelectedItem(item)"
             >
               <li
                 :class="[
@@ -63,7 +63,7 @@
                     'block truncate',
                   ]"
                 >
-                  {{ state.name }}
+                  {{ item.name }}
                 </span>
                 <span
                   v-if="selected"
@@ -82,6 +82,7 @@
     </Listbox>
   </div>
 </template>
+
 <script setup lang="ts">
 import {
   Listbox,
@@ -91,7 +92,7 @@ import {
 } from '@headlessui/vue';
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/vue/20/solid';
 
-interface State {
+interface Item {
   name: string;
   value: string;
 }
@@ -101,7 +102,7 @@ interface Props {
   label: string;
   modelValue?: string;
   error?: string;
-  states: State[];
+  items: Item[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -109,21 +110,21 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
 });
 
-const { modelValue, states } = toRefs(props);
+const { modelValue, items } = toRefs(props);
 const emit = defineEmits(['update:modelValue']);
 
-const inputId = `state-dropdown-${Math.random().toString(36).substr(2, 9)}`;
-const defaultState: State = { name: '', value: '' };
-const selectedState: Ref<State> = ref(
-  states.value.find((s) => s.value === modelValue.value) || defaultState
+const inputId = `item-dropdown-${Math.random().toString(36).slice(2, 9)}`;
+const defaultItem: Item = { name: '', value: '' };
+const selectedItem: Ref<Item> = ref(
+  items.value.find((i) => i.value === modelValue.value) || defaultItem
 );
 const searchQuery = ref('');
 const hiddenInput = ref<HTMLInputElement | null>(null);
 
-const filteredStates = computed(() => {
-  if (!searchQuery.value) return states.value;
-  return states.value.filter((state) =>
-    state.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+const filteredItems = computed(() => {
+  if (!searchQuery.value) return items.value;
+  return items.value.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
 
@@ -133,18 +134,18 @@ const focusHiddenInput = () => {
   });
 };
 
-const updateSelectedState = (newState: State) => {
-  selectedState.value = newState;
-  emit('update:modelValue', newState);
+const updateSelectedItem = (newItem: Item) => {
+  selectedItem.value = newItem;
+  emit('update:modelValue', newItem);
   searchQuery.value = '';
 };
 
 watch(
   modelValue,
   (newVal) => {
-    const matchedState = states.value.find((s) => s.value === newVal);
-    if (matchedState) {
-      selectedState.value = matchedState;
+    const matchedItem = items.value.find((i) => i.value === newVal);
+    if (matchedItem) {
+      selectedItem.value = matchedItem;
     }
   },
   { immediate: true }
@@ -152,12 +153,11 @@ watch(
 
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Enter' || event.key === 'Space') {
-    const activeOption = filteredStates.value.findIndex(
-      (state) => state === selectedState.value
+    const activeOption = filteredItems.value.findIndex(
+      (item) => item === selectedItem.value
     );
-
     if (activeOption !== -1) {
-      updateSelectedState(filteredStates.value[activeOption]);
+      updateSelectedItem(filteredItems.value[activeOption]);
     }
   }
 };
