@@ -71,3 +71,28 @@ export interface ConfimationModalState {
   message: string;
   confirmButtonText: string;
 }
+
+export interface MonthlyRevenue {
+  months: string[];
+  revenues: number[];
+}
+
+export interface OrderStatusDistribution {
+  date: string[];
+  statuses: OrderStatus[];
+  counts: number[];
+}
+
+export interface AggregateStatsData {
+  revenue: number;
+  orderCount: number;
+  customerCount: number;
+  monthlyRevenue: MonthlyRevenue;
+  orderStatusDistribution: OrderStatusDistribution;
+}
+
+export interface ApiAggregateStatsResponse {
+  status: string;
+  data: AggregateStatsData;
+  message: string;
+}

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatMoney, formatDate } from '~/utils';
+import { ApiAggregateStatsResponse } from '~/types/types';
 
 const numberOfCustomers = ref<number>();
 const numberOfOrders = ref<number>();
@@ -8,15 +9,19 @@ const selectedDates = ref<string[]>([
   new Date(new Date().getFullYear(), 0, 1).toISOString(),
   new Date().toISOString(),
 ]);
-const monthlyRevenueData = ref<{ months: number[]; revenues: number[] }>();
-const orderStatusData = ref<{ counts: number[]; statuses: string[] }>();
+const monthlyRevenueData = ref<{ months: string[]; revenues: number[] }>();
+const orderStatusData = ref<{
+  counts: number[];
+  statuses: string[];
+  date: string[];
+}>();
 const isErrorShowing = ref(false);
 const isLoading = ref(false);
 
 const fetchData = async (url: string) => {
   try {
     isLoading.value = true;
-    const data = await useFetchWithCache(url);
+    const data = await useFetchWithCache<ApiAggregateStatsResponse>(url);
     // @ts-ignore
     const {
       revenue,
