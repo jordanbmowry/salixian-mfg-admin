@@ -1,5 +1,15 @@
 <template>
   <div v-auto-animate class="space-y-10 divide-y divide-gray-900/10">
+    <ConfirmationModal
+      v-if="isConfirmationModalOpen"
+      :show="isConfirmationModalOpen"
+      @confirm="confirmationModalConfirmMethod"
+      @update:open="isConfirmationModalOpen = $event"
+      :dangerMode="confirmationModalDangerMode"
+      :heading="confirmationModalHeading"
+      :message="confirmationModalMessage"
+      :confirmButtonText="confirmationModalConfirmButtonText"
+    />
     <NotificationToast
       type="error"
       :isVisible="isErrorShowing"
@@ -19,7 +29,7 @@
       </div>
 
       <form
-        @submit="onSubmit"
+        @submit="handleConfirmCreateCustomer"
         class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2"
       >
         <div class="px-4 py-6 sm:p-8">
@@ -237,10 +247,13 @@ import {
 import * as yup from 'yup';
 import { useField, useForm } from 'vee-validate';
 import { STATES } from '~/data/states';
+import type { ConfimationModalState } from '~/types/types';
 
 const useShippingForBilling = ref(false);
+const isConfirmationModalOpen = ref(false);
 const isSubmitting = ref(false);
 const isErrorShowing = ref(false);
+const confimationModalState = ref<ConfimationModalState | {}>({});
 const errorMessage = ref('');
 const states = ref(STATES);
 
@@ -366,7 +379,7 @@ function findStateByValue(value: string) {
 const selectedShippingState = ref(findStateByValue(shipping_state.value));
 const selectedBillingState = ref(findStateByValue(billing_state.value));
 
-const onSubmit = handleSubmit(async (formData) => {
+const handleCreateCustomer = handleSubmit(async (formData) => {
   try {
     isSubmitting.value = true;
     const { error } = await useFetch(`${baseUrl}/customers`, {
@@ -458,4 +471,51 @@ const updateBillingState = createStateUpdater(
   billing_state,
   selectedBillingState
 );
+
+const handleConfirmCreateCustomer = () => {
+  confimationModalState.value = {
+    confirm: handleCreateCustomer,
+    dangerMode: false,
+    heading: 'Confirmation',
+    message: 'Do you want to proceed with creating the customer?',
+    confirmButtonText: 'Yes',
+  };
+
+  isConfirmationModalOpen.value = true;
+};
+
+const confirmationModalConfirmMethod = computed(() => {
+  if ('confirm' in confimationModalState.value) {
+    return confimationModalState.value.confirm;
+  }
+  return () => {};
+});
+
+const confirmationModalDangerMode = computed(() => {
+  if ('dangerMode' in confimationModalState.value) {
+    return confimationModalState.value.dangerMode;
+  }
+  return false;
+});
+
+const confirmationModalHeading = computed(() => {
+  if ('heading' in confimationModalState.value) {
+    return confimationModalState.value.heading;
+  }
+  return '';
+});
+
+const confirmationModalMessage = computed(() => {
+  if ('message' in confimationModalState.value) {
+    return confimationModalState.value.message;
+  }
+  return '';
+});
+
+const confirmationModalConfirmButtonText = computed(() => {
+  if ('confirmButtonText' in confimationModalState.value) {
+    return confimationModalState.value.confirmButtonText;
+  }
+  return '';
+});
 </script>
