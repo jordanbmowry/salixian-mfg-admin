@@ -1,7 +1,7 @@
 <template>
   <main>
     <h1 class="font-semibold leading-6 text-4xl pb-10">Orders</h1>
-    <div v-if="orders.data" class="px-4 sm:px-6 lg:px-8">
+    <div v-if="orders.length" class="px-4 sm:px-6 lg:px-8">
       <div class="md:flex md:justify-between gap-4">
         <DatePicker
           class="max-w-sm self-end mx-auto 2xl:mx-0"
@@ -139,15 +139,15 @@
                   </tr>
                 </thead>
                 <tbody
-                  v-if="orders.data"
+                  v-if="orders.length"
                   class="divide-y divide-gray-200 bg-white"
                 >
                   <tr
-                    v-for="order in orders.data"
+                    v-for="order in orders"
                     :key="order.order_id"
                     class="cursor-pointer"
                     @click="
-                      () => navigateToOrder(order.order_id, order.customer_id)
+                      () => navigateToOrder(order?.order_id!, order.customer_id!)
                     "
                   >
                     <td
@@ -156,25 +156,25 @@
                       <address class="flex flex-col justify-center gap-2">
                         <div class="font-semibold">
                           {{
-                            createFullName(order.first_name, order.last_name)
+                            createFullName(order?.first_name, order?.last_name)
                           }}
                         </div>
                         <div class="text-gray-500">
-                          {{ formatPhoneNumber(order.phone_number) }}
+                          {{ formatPhoneNumber(order?.phone_number) }}
                         </div>
                         <div class="text-gray-500">
-                          {{ order.email }}
+                          {{ order?.email }}
                         </div>
                       </address>
                     </td>
                     <td
                       class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
                     >
-                      {{ formatDate(order.order_date) }}
+                      {{ formatDate(order?.order_date) }}
                     </td>
                     <td class="whitespace-nowrap px-3 py-4">
                       <span
-                        :class="orderStatusClass(order.order_status)"
+                        :class="orderStatusClass(order?.order_status)"
                         class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-400/20 rounded-md"
                       >
                         {{ order.order_status }}
@@ -182,7 +182,7 @@
                     </td>
                     <td class="whitespace-nowrap px-3 py-4">
                       <span
-                        :class="paymentStatusClass(order.payment_status)"
+                        :class="paymentStatusClass(order?.payment_status)"
                         class="py-1 px-3 text-xs font-medium text-gray-900 rounded-md"
                       >
                         {{ order.payment_status }}
@@ -222,8 +222,6 @@
 </template>
 
 <script setup lang="ts">
-import { formatPhoneNumber, formatDate } from '~/utils';
-
 import { useDebounceFn } from '@vueuse/core';
 import {
   Listbox,
@@ -232,6 +230,12 @@ import {
   ListboxOptions,
 } from '@headlessui/vue';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid';
+import { formatPhoneNumber, formatDate } from '~/utils';
+import type {
+  ApiOrdersResponse,
+  Meta,
+  OrderWithCustomerName,
+} from '~/types/types';
 
 const searchBy = [
   { id: 1, name: 'Phone number', value: 'phoneNumber' },
@@ -242,11 +246,17 @@ const searchBy = [
 
 const selected = ref(searchBy[0]);
 
-const orders = ref({});
+const orders = ref<OrderWithCustomerName[]>([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const search = ref('');
 const selectedDates = ref([]);
+const meta = ref<Meta>({
+  currentPage: 0,
+  totalPages: 0,
+  pageSize: 0,
+  totalCount: 0,
+});
 
 const buildUrl = () => {
   let url = `/orders/orders-with-customers?page=${currentPage.value}&size=${pageSize.value}&orderBy=updated_at&order=desc`;
@@ -264,8 +274,9 @@ const url = computed(buildUrl);
 
 const fetchData = async () => {
   try {
-    const data = await useFetchWithCache(url.value);
-    orders.value = data.value;
+    const data = await useFetchWithCache<ApiOrdersResponse>(url.value);
+    orders.value = data.value.data;
+    meta.value = data.value.meta;
   } catch (error) {
     console.error('Error fetching the data: ', error);
   }
@@ -293,14 +304,11 @@ const startItem = computed(computeStartItem);
 
 const computeEndItem = () => {
   return orders.value
-    ? Math.min(
-        currentPage.value * pageSize.value,
-        orders.value?.meta?.totalCount
-      )
+    ? Math.min(currentPage.value * pageSize.value, meta.value.totalCount)
     : pageSize.value;
 };
 const endItem = computed(computeEndItem);
-const totalItems = computed(() => orders.value?.meta?.totalCount || 0);
+const totalItems = computed(() => meta.value.totalCount || 0);
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
 
 const handleUpdateCurrentPage = (newCurrentPage: number) => {

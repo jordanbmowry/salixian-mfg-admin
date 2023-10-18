@@ -103,6 +103,24 @@ export interface ApiOrderResponse {
   message: string;
 }
 
+export interface OrderWithCustomerName extends Order {
+  order_created_at: string;
+  first_name: string;
+  last_name: string;
+  customer_id: string;
+  email: string;
+  phone_number: string;
+  customer_created_at: string;
+  customer_updated_at: string;
+}
+
+export interface ApiOrdersResponse {
+  message: string;
+  status: string;
+  data: OrderWithCustomerName[];
+  meta: Meta;
+}
+
 export interface ApiCustomerResponse {
   status: string;
   data: Partial<Customer>;
