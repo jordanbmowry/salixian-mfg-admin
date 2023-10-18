@@ -15,7 +15,7 @@
             <Listbox as="div" v-model="selected" class="w-full">
               <div class="relative">
                 <ListboxButton
-                  class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 text-xs sm:text-sm"
+                  class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-stone-600 text-xs sm:text-sm"
                 >
                   <span class="block truncate">{{ selected.name }}</span>
                   <span
@@ -86,7 +86,7 @@
                 <input
                   id="search"
                   name="search"
-                  class="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  class="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-stone-600 sm:text-sm sm:leading-6"
                   :placeholder="`${selected.name}`"
                   type="search"
                   v-model="search"
