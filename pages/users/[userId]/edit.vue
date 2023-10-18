@@ -2,20 +2,35 @@
 import { USER_ROLES } from '~/data/userRoles';
 import { useField, useForm } from 'vee-validate';
 import { useUserStore } from '~/stores/userStore';
-import { User } from '~/stores/userStore';
+import {
+  User,
+  ApiUserResponse,
+  ConfimationModalState,
+  Role,
+} from '~/types/types';
 import * as yup from 'yup';
 
 const route = useRoute();
 const userRoles = ref(USER_ROLES);
 const isErrorShowing = ref(false);
 const isConfirmationModalOpen = ref(false);
-const confimationModalState = ref({});
+const confimationModalState = ref<ConfimationModalState | {}>({});
 const errorMessage = ref('');
 const isSubmitting = ref(false);
 const baseUrl = useRuntimeConfig().public.baseURL;
 const { userId } = route.params;
 const userStore = useUserStore();
-const userData = ref({});
+const userData = ref<User>({
+  user_id: '',
+  email: '',
+  role: Role.USER,
+  first_name: null,
+  last_name: null,
+  last_login: '',
+  created_at: '',
+  updated_at: '',
+  notes: null,
+});
 
 const validations = yup.object({
   first_name: yup.string().trim().label('First name'),
@@ -76,7 +91,7 @@ const { value: notes, errorMessage: notesError } = useField<string>('notes');
 
 async function fetchData(url: string) {
   try {
-    const data = await useFetchWithCache<{ data: Partial<User> }>(url);
+    const data = await useFetchWithCache<ApiUserResponse>(url);
     userData.value = data.value.data;
     const {
       first_name: fetchedFirstName,
@@ -86,11 +101,11 @@ async function fetchData(url: string) {
       notes: fetchedNotes,
     } = data.value.data;
 
-    first_name.value = fetchedFirstName || '';
-    last_name.value = fetchedLastName || '';
-    email.value = fetchedEmail;
-    role.value = fetchedRole;
-    notes.value = fetchedNotes || '';
+    first_name.value = fetchedFirstName ?? '';
+    last_name.value = fetchedLastName ?? '';
+    email.value = fetchedEmail ?? '';
+    role.value = fetchedRole ?? '';
+    notes.value = fetchedNotes ?? '';
   } catch (error) {
     console.error('Error fetching the data: ', error);
   }
@@ -107,11 +122,11 @@ const handleUpdateUser = handleSubmit(async (formData) => {
   };
 
   if (!formData.password || !formData.confirmPassword) {
-    delete data?.password;
+    delete (data as any)?.password;
   }
 
   if (userStore.role !== 'admin') {
-    delete data?.role;
+    delete (data as any)?.role;
   }
 
   try {
@@ -127,7 +142,6 @@ const handleUpdateUser = handleSubmit(async (formData) => {
 
     if (error.value) {
       errorMessage.value = error.value?.data?.error;
-      // @ts-ignore
       throw new Error(error.value?.data?.error);
     }
     sessionStorage.clear();
@@ -227,6 +241,41 @@ const handleConfirmDelete = () => {
   isConfirmationModalOpen.value = true;
 };
 
+const confirmationModalConfirmMethod = computed(() => {
+  if ('confirm' in confimationModalState.value) {
+    return confimationModalState.value.confirm;
+  }
+  return () => {};
+});
+
+const confirmationModalDangerMode = computed(() => {
+  if ('dangerMode' in confimationModalState.value) {
+    return confimationModalState.value.dangerMode;
+  }
+  return false;
+});
+
+const confirmationModalHeading = computed(() => {
+  if ('heading' in confimationModalState.value) {
+    return confimationModalState.value.heading;
+  }
+  return '';
+});
+
+const confirmationModalMessage = computed(() => {
+  if ('message' in confimationModalState.value) {
+    return confimationModalState.value.message;
+  }
+  return '';
+});
+
+const confirmationModalConfirmButtonText = computed(() => {
+  if ('confirmButtonText' in confimationModalState.value) {
+    return confimationModalState.value.confirmButtonText;
+  }
+  return '';
+});
+
 definePageMeta({
   middleware: ['is-user'],
 });
@@ -237,12 +286,12 @@ definePageMeta({
     <ConfirmationModal
       v-if="isConfirmationModalOpen"
       :show="isConfirmationModalOpen"
-      @confirm="confimationModalState.confirm"
+      @confirm="confirmationModalConfirmMethod"
       @update:open="isConfirmationModalOpen = $event"
-      :dangerMode="confimationModalState.dangerMode"
-      :heading="confimationModalState.heading"
-      :message="confimationModalState.message"
-      :confirmButtonText="confimationModalState.confirmButtonText"
+      :dangerMode="confirmationModalDangerMode"
+      :heading="confirmationModalHeading"
+      :message="confirmationModalMessage"
+      :confirmButtonText="confirmationModalConfirmButtonText"
     />
 
     <NotificationToast

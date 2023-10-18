@@ -154,6 +154,12 @@ export interface User {
   notes: string | null;
 }
 
+export interface ApiUserResponse {
+  status: string;
+  data: User;
+  message: string;
+}
+
 export interface ApiUsersResponse {
   status: string;
   data: User[];
