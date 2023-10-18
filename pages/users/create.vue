@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { USER_ROLES } from '~/data/userRoles';
 import { useField, useForm } from 'vee-validate';
-import { useUserStore } from '~/stores/userStore';
-import { User } from '~/stores/userStore';
 import * as yup from 'yup';
+import { ConfimationModalState } from '~/types/types';
 
 const route = useRoute();
 const userRoles = ref(USER_ROLES);
 const isErrorShowing = ref(false);
 const isConfirmationModalOpen = ref(false);
-const confimationModalState = ref({});
+const confimationModalState = ref<ConfimationModalState | {}>({});
 const errorMessage = ref('');
 const isSubmitting = ref(false);
 const baseUrl = useRuntimeConfig().public.baseURL;
@@ -130,6 +129,41 @@ const updateUserRole = createStateUpdater(role, selectedUserRole);
 definePageMeta({
   middleware: ['check-admin'],
 });
+
+const confirmationModalConfirmMethod = computed(() => {
+  if ('confirm' in confimationModalState.value) {
+    return confimationModalState.value.confirm;
+  }
+  return () => {};
+});
+
+const confirmationModalDangerMode = computed(() => {
+  if ('dangerMode' in confimationModalState.value) {
+    return confimationModalState.value.dangerMode;
+  }
+  return false;
+});
+
+const confirmationModalHeading = computed(() => {
+  if ('heading' in confimationModalState.value) {
+    return confimationModalState.value.heading;
+  }
+  return '';
+});
+
+const confirmationModalMessage = computed(() => {
+  if ('message' in confimationModalState.value) {
+    return confimationModalState.value.message;
+  }
+  return '';
+});
+
+const confirmationModalConfirmButtonText = computed(() => {
+  if ('confirmButtonText' in confimationModalState.value) {
+    return confimationModalState.value.confirmButtonText;
+  }
+  return '';
+});
 </script>
 
 <template>
@@ -137,12 +171,12 @@ definePageMeta({
     <ConfirmationModal
       v-if="isConfirmationModalOpen"
       :show="isConfirmationModalOpen"
-      @confirm="confimationModalState.confirm"
+      @confirm="confirmationModalConfirmMethod"
       @update:open="isConfirmationModalOpen = $event"
-      :dangerMode="confimationModalState.dangerMode"
-      :heading="confimationModalState.heading"
-      :message="confimationModalState.message"
-      :confirmButtonText="confimationModalState.confirmButtonText"
+      :dangerMode="confirmationModalDangerMode"
+      :heading="confirmationModalHeading"
+      :message="confirmationModalMessage"
+      :confirmButtonText="confirmationModalConfirmButtonText"
     />
 
     <NotificationToast
