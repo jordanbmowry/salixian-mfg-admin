@@ -10,16 +10,23 @@
 <script setup lang="ts">
 import { BarChart } from 'vue-chart-3';
 import type { ChartData } from 'chart.js';
-import { ref, watchEffect } from 'vue';
+
+interface MonthlyRevenueDataProps {
+  months: string[];
+  revenues: number[];
+}
 
 const props = defineProps({
   monthlyRevenueData: {
-    type: Object,
+    type: Object as () => MonthlyRevenueDataProps,
     required: true,
   },
 });
 
-const chartData = ref<ChartData>({ labels: [], datasets: [] });
+const chartData = ref<ChartData<'bar', number[], string>>({
+  labels: [],
+  datasets: [],
+});
 
 watchEffect(() => {
   chartData.value = {

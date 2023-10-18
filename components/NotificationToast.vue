@@ -40,7 +40,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
 import {
   CheckCircleIcon,
   XCircleIcon,

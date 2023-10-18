@@ -1,11 +1,37 @@
-<script setup>
-const error = useError();
+<script setup lang="ts">
+interface AppError {
+  url: string;
+  statusCode: number;
+  statusMessage: string;
+  message: string;
+  description: string;
+  data?: any;
+}
+type AppErrorOrNative = AppError | Error | null | undefined;
+type ErrorRef = Ref<AppErrorOrNative>;
 
+const isAppError = (error: ErrorRef): error is Ref<AppError> => {
+  return Boolean(error.value && 'statusCode' in error.value);
+};
+
+const error = useError();
 const handleError = () => {
   clearError({
     redirect: '/',
   });
 };
+
+const statusCode = computed(() => {
+  return isAppError(error) ? error.value.statusCode : 'Unknown';
+});
+
+const errorMessage = computed(() => {
+  return error.value
+    ? isAppError(error)
+      ? error.value.message
+      : 'Unknown error'
+    : 'No error message';
+});
 </script>
 
 <template>
@@ -20,13 +46,13 @@ const handleError = () => {
         class="text-red-600"
       />
       <p class="text-base font-semibold leading-8 text-white">
-        {{ error.statusCode }}
+        {{ statusCode }}
       </p>
       <h1 class="mt-4 text-3xl font-bold tracking-tight text-white sm:text-5xl">
         Shit! 💩
       </h1>
       <p class="mt-4 text-base text-white/70 sm:mt-6">
-        <strong>{{ error.message }}</strong>
+        <strong>{{ errorMessage }}</strong>
       </p>
       <p class="mt-4 text-base text-white/70 sm:mt-6">
         It looks like something broke.

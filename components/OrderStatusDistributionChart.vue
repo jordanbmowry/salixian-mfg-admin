@@ -11,9 +11,15 @@
 import { BarChart } from 'vue-chart-3';
 import type { ChartData } from 'chart.js';
 
+interface OrderStatusDistributionDataProps {
+  date: string[];
+  statuses: string[];
+  counts: number[];
+}
+
 const props = defineProps({
   orderStatusDistributionData: {
-    type: Object,
+    type: Object as () => OrderStatusDistributionDataProps,
     required: true,
   },
 });
@@ -23,7 +29,10 @@ const isDataAvailable = ref(
     props.orderStatusDistributionData !== undefined
 );
 
-const chartData = ref<ChartData>({ labels: [], datasets: [] });
+const chartData = ref<ChartData<'bar', number[], string>>({
+  labels: [],
+  datasets: [],
+});
 
 const options = ref({
   plugins: {
