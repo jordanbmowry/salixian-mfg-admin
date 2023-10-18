@@ -81,7 +81,6 @@ const computeEndItem = () => {
     : pageSize.value;
 };
 const endItem = computed(computeEndItem);
-// @ts-ignore
 const totalItems = computed(() => paginationData.value?.totalCount || 0);
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value));
 

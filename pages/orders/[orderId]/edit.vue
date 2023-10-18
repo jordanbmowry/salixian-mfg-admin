@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { Order, Customer, ConfimationModalState } from '~/types/types';
+import {
+  Customer,
+  ConfimationModalState,
+  ApiOrderResponse,
+} from '~/types/types';
 import { useField, useForm } from 'vee-validate';
 import { ORDER_STATUS } from '~/data/orderStatus';
 import { PAYMENT_STATUS } from '~/data/paymentStatus';
@@ -13,7 +17,24 @@ const orderId = route.params.orderId;
 const orderStatus = ref(ORDER_STATUS);
 const paymentStatus = ref(PAYMENT_STATUS);
 const isLoading = ref(false);
-const customerData = ref<Customer | {}>({});
+const customerData = ref<Partial<Customer>>({
+  customer_id: '',
+  first_name: '',
+  last_name: '',
+  email: '',
+  phone_number: '',
+  shipping_address: '',
+  shipping_city: '',
+  shipping_state: '',
+  shipping_zip: '',
+  billing_address: '',
+  billing_city: '',
+  billing_state: '',
+  billing_zip: '',
+  notes: '',
+  created_at: '',
+  updated_at: '',
+});
 const isErrorShowing = ref(false);
 const confimationModalState = ref<ConfimationModalState | {}>({});
 const errorMessage = ref('');
@@ -145,21 +166,6 @@ const updatePaymentStatus = createStateUpdater(
   selectedPaymentStatus
 );
 
-const fetchCustomerData = async (url: string) => {
-  try {
-    isLoading.value = true;
-    const data = await useFetchWithCache(url);
-    // @ts-ignore
-    customerData.value = data.value.data;
-  } catch (error) {
-    errorMessage.value = 'Error fetching the data.';
-    isErrorShowing.value = true;
-    console.error('Error fetching the data: ', error);
-  } finally {
-    isLoading.value = false;
-  }
-};
-
 const handleUpdateOrder = handleSubmit(async (formData) => {
   const data = {
     ...formData,
@@ -178,7 +184,6 @@ const handleUpdateOrder = handleSubmit(async (formData) => {
 
     if (error.value) {
       errorMessage.value = error.value?.data?.error;
-      // @ts-ignore
       throw new Error(error.value?.data?.error);
     }
     sessionStorage.clear();
@@ -193,7 +198,8 @@ const handleUpdateOrder = handleSubmit(async (formData) => {
 
 onMounted(async () => {
   try {
-    const orderData = await useFetchWithCache<{ data: Order }>(
+    isLoading.value = true;
+    const orderData = await useFetchWithCache<ApiOrderResponse>(
       `/orders/${orderId}`
     );
     const {
@@ -217,17 +223,17 @@ onMounted(async () => {
 
     customerData.value = fetchedCustomerData.value.data;
 
-    order_date.value = new Date(orderDate);
-    order_description.value = orderDescription;
-    customer_cost.value = customerCost;
-    input_expenses.value = inputExpenses;
-    taxes_fees.value = taxesFees;
-    shipping_cost.value = shippingCost;
-    total_write_off.value = totalWriteOff;
-    profit.value = fetchedProfit;
-    notes.value = fetchedNotes;
-    order_status.value = fetchedOrderStatus;
-    payment_status.value = fetchedPaymentStatus;
+    order_date.value = new Date(orderDate as string);
+    order_description.value = orderDescription ?? '';
+    customer_cost.value = customerCost ?? '';
+    input_expenses.value = inputExpenses ?? '';
+    taxes_fees.value = taxesFees ?? '';
+    shipping_cost.value = shippingCost ?? '';
+    total_write_off.value = totalWriteOff ?? '';
+    profit.value = fetchedProfit ?? '';
+    notes.value = fetchedNotes ?? '';
+    order_status.value = fetchedOrderStatus ?? '';
+    payment_status.value = fetchedPaymentStatus ?? '';
 
     selectedOrderStatus.value = findByValue(order_status.value, orderStatus);
     selectedPaymentStatus.value = findByValue(
@@ -238,6 +244,8 @@ onMounted(async () => {
     isErrorShowing.value = true;
     errorMessage.value = `Failed to fetch data`;
     console.error(error);
+  } finally {
+    isLoading.value = false;
   }
 });
 
@@ -330,6 +338,41 @@ const handleConfirmHardDelete = () => {
 
   isConfirmationModalOpen.value = true;
 };
+
+const confirmationModalConfirmMethod = computed(() => {
+  if ('confirm' in confimationModalState.value) {
+    return confimationModalState.value.confirm;
+  }
+  return () => {};
+});
+
+const confirmationModalDangerMode = computed(() => {
+  if ('dangerMode' in confimationModalState.value) {
+    return confimationModalState.value.dangerMode;
+  }
+  return false;
+});
+
+const confirmationModalHeading = computed(() => {
+  if ('heading' in confimationModalState.value) {
+    return confimationModalState.value.heading;
+  }
+  return '';
+});
+
+const confirmationModalMessage = computed(() => {
+  if ('message' in confimationModalState.value) {
+    return confimationModalState.value.message;
+  }
+  return '';
+});
+
+const confirmationModalConfirmButtonText = computed(() => {
+  if ('confirmButtonText' in confimationModalState.value) {
+    return confimationModalState.value.confirmButtonText;
+  }
+  return '';
+});
 </script>
 
 <template>
@@ -337,12 +380,12 @@ const handleConfirmHardDelete = () => {
     <ConfirmationModal
       v-if="isConfirmationModalOpen"
       :show="isConfirmationModalOpen"
-      @confirm="confimationModalState.confirm"
+      @confirm="confirmationModalConfirmMethod"
       @update:open="isConfirmationModalOpen = $event"
-      :dangerMode="confimationModalState.dangerMode"
-      :heading="confimationModalState.heading"
-      :message="confimationModalState.message"
-      :confirmButtonText="confimationModalState.confirmButtonText"
+      :dangerMode="confirmationModalDangerMode"
+      :heading="confirmationModalHeading"
+      :message="confirmationModalMessage"
+      :confirmButtonText="confirmationModalConfirmButtonText"
     />
 
     <NotificationToast
@@ -353,8 +396,9 @@ const handleConfirmHardDelete = () => {
       :message="errorMessage"
     />
     <Loader v-if="isSubmitting" />
+    <TableLoader v-if="isLoading" />
     <div
-      v-if="customerData.last_name"
+      v-if="!isLoading && customerData.last_name"
       class="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3"
     >
       <div class="px-4 sm:px-0">

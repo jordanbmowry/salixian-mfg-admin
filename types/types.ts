@@ -103,7 +103,7 @@ export interface ApiOrderResponse {
   message: string;
 }
 
-export interface ApiCustomersResponse {
+export interface ApiCustomerResponse {
   status: string;
   data: Partial<Customer>;
   message: string;

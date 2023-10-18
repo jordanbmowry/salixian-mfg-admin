@@ -4,16 +4,35 @@ import { PAYMENT_STATUS } from '~/data/paymentStatus';
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { formatDate } from '~/utils';
+import type { ApiCustomerResponse, ConfimationModalState } from '~/types/types';
 
 const route = useRoute();
 const baseUrl = useRuntimeConfig().public.baseURL;
 
 const orderStatus = ref(ORDER_STATUS);
 const paymentStatus = ref(PAYMENT_STATUS);
+const confimationModalState = ref<ConfimationModalState | {}>({});
 const isLoading = ref(false);
-const customerData = ref({});
+const customerData = ref({
+  customer_id: '',
+  first_name: '',
+  last_name: '',
+  email: '',
+  phone_number: '',
+  shipping_address: '',
+  shipping_city: '',
+  shipping_state: '',
+  shipping_zip: '',
+  billing_address: '',
+  billing_city: '',
+  billing_state: '',
+  billing_zip: '',
+  notes: '',
+  created_at: '',
+  updated_at: '',
+  deleted_at: null,
+});
 const isErrorShowing = ref(false);
-const confimationModalState = ref({});
 const errorMessage = ref('');
 const isSubmitting = ref(false);
 const isConfirmationModalOpen = ref(false);
@@ -157,7 +176,7 @@ const updatePaymentStatus = createStateUpdater(
 const fetchCustomerData = async (url: string) => {
   try {
     isLoading.value = true;
-    const data = await useFetchWithCache(url);
+    const data = await useFetchWithCache<ApiCustomerResponse>(url);
     // @ts-ignore
     customerData.value = data.value.data;
   } catch (error) {
@@ -192,7 +211,6 @@ const handleCreateOrder = handleSubmit(async (formData) => {
 
     if (error.value) {
       errorMessage.value = error.value?.data?.error;
-      // @ts-ignore
       throw new Error(error.value?.data?.error);
     }
     sessionStorage.clear();
@@ -216,6 +234,41 @@ const handleConfirmCreateOrder = () => {
 
   isConfirmationModalOpen.value = true;
 };
+
+const confirmationModalConfirmMethod = computed(() => {
+  if ('confirm' in confimationModalState.value) {
+    return confimationModalState.value.confirm;
+  }
+  return () => {};
+});
+
+const confirmationModalDangerMode = computed(() => {
+  if ('dangerMode' in confimationModalState.value) {
+    return confimationModalState.value.dangerMode;
+  }
+  return false;
+});
+
+const confirmationModalHeading = computed(() => {
+  if ('heading' in confimationModalState.value) {
+    return confimationModalState.value.heading;
+  }
+  return '';
+});
+
+const confirmationModalMessage = computed(() => {
+  if ('message' in confimationModalState.value) {
+    return confimationModalState.value.message;
+  }
+  return '';
+});
+
+const confirmationModalConfirmButtonText = computed(() => {
+  if ('confirmButtonText' in confimationModalState.value) {
+    return confimationModalState.value.confirmButtonText;
+  }
+  return '';
+});
 </script>
 
 <template>
@@ -223,12 +276,12 @@ const handleConfirmCreateOrder = () => {
     <ConfirmationModal
       v-if="isConfirmationModalOpen"
       :show="isConfirmationModalOpen"
-      @confirm="confimationModalState.confirm"
+      @confirm="confirmationModalConfirmMethod"
       @update:open="isConfirmationModalOpen = $event"
-      :dangerMode="confimationModalState.dangerMode"
-      :heading="confimationModalState.heading"
-      :message="confimationModalState.message"
-      :confirmButtonText="confimationModalState.confirmButtonText"
+      :dangerMode="confirmationModalDangerMode"
+      :heading="confirmationModalHeading"
+      :message="confirmationModalMessage"
+      :confirmButtonText="confirmationModalConfirmButtonText"
     />
 
     <NotificationToast
