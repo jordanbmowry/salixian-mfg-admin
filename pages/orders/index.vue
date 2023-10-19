@@ -1,7 +1,7 @@
 <template>
   <main>
     <h1 class="font-semibold leading-6 text-4xl pb-10">Orders</h1>
-    <div v-if="orders.length" class="px-4 sm:px-6 lg:px-8">
+    <div v-if="!isLoading" class="px-4 sm:px-6 lg:px-8">
       <div class="md:flex md:justify-between gap-4">
         <DatePicker
           class="max-w-sm self-end mx-auto 2xl:mx-0"
@@ -248,6 +248,7 @@ const selected = ref(searchBy[0]);
 
 const orders = ref<OrderWithCustomerName[]>([]);
 const currentPage = ref(1);
+const isLoading = ref(false);
 const pageSize = ref(10);
 const search = ref('');
 const selectedDates = ref([]);
@@ -265,7 +266,7 @@ const buildUrl = () => {
   }
 
   if (selectedDates.value?.length) {
-    url += `&startDate=${selectedDates.value[0]}&endDate=${selectedDates.value[0]}`;
+    url += `&startDate=${selectedDates.value[0]}&endDate=${selectedDates.value[1]}`;
   }
 
   return url;
@@ -274,11 +275,14 @@ const url = computed(buildUrl);
 
 const fetchData = async () => {
   try {
+    isLoading.value = true;
     const data = await useFetchWithCache<ApiOrdersResponse>(url.value);
     orders.value = data.value.data;
     meta.value = data.value.meta;
   } catch (error) {
     console.error('Error fetching the data: ', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
