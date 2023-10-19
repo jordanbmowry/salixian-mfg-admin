@@ -370,10 +370,13 @@ const handleCreateCustomer = handleSubmit(async (formData) => {
     });
 
     if (error.value) {
-      errorMessage.value = error.value?.data?.error;
-      // @ts-ignore
+      errorMessage.value =
+        //@ts-ignore
+        error.value?.data?.error ?? error.value?.cause?.message;
+
       throw new Error(error.value?.data?.error);
     }
+
     sessionStorage.clear();
     await navigateTo('/customers');
   } catch (err) {

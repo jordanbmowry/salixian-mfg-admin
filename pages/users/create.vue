@@ -77,7 +77,9 @@ const handleCreateUser = handleSubmit(async (formData) => {
     });
 
     if (error.value) {
-      errorMessage.value = error.value?.data?.error;
+      errorMessage.value =
+        // @ts-ignore
+        error.value?.data?.error ?? error.value?.cause?.message;
       // @ts-ignore
       throw new Error(error.value?.data?.error);
     }

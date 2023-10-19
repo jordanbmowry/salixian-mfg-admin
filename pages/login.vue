@@ -12,7 +12,8 @@ const userStore = useUserStore();
 const baseURL = useRuntimeConfig().public.baseURL;
 
 const formSubmittingInProcess = ref(false);
-const toastVisible = ref(false);
+const isToastVisible = ref(false);
+const errorMessage = ref('');
 
 const validations = yup.object({
   email: yup.string().required().email(),
@@ -40,6 +41,12 @@ const onSubmit = handleSubmit(async (formData) => {
         },
       }
     );
+    if (error.value) {
+      errorMessage.value =
+        //@ts-ignore
+        error.value?.data?.error ?? error.value?.cause?.message;
+      throw new Error(error.value?.data?.error);
+    }
 
     //@ts-ignore
     const userData: User = data.value?.data;
@@ -49,8 +56,8 @@ const onSubmit = handleSubmit(async (formData) => {
       userStore.isAuthenticated = true;
       return await navigateTo('/');
     }
-    toastVisible.value = true;
   } catch (error) {
+    isToastVisible.value = true;
     console.error(error);
   } finally {
     formSubmittingInProcess.value = false;
@@ -58,17 +65,17 @@ const onSubmit = handleSubmit(async (formData) => {
   }
 });
 function handleDismiss() {
-  toastVisible.value = false;
+  isToastVisible.value = false;
 }
 </script>
 
 <template>
   <NotificationToast
     type="error"
-    :isVisible="toastVisible"
+    :isVisible="isToastVisible"
     :dismissible="true"
     @dismiss="handleDismiss"
-    message="Incorrect email or password."
+    :message="errorMessage"
   />
 
   <div
