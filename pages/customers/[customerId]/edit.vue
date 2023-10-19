@@ -627,7 +627,7 @@ const handleConfirmHardDelete = () => {
     dangerMode: true,
     heading: 'Hard delete customer',
     message:
-      'Do you want to permanently delete this customer? All orders connected to this customer will be deleted as well.',
+      'Do you want to permanently delete this customer? All orders for this customer will be deleted as well.',
     confirmButtonText: 'Hard delete',
   };
 
