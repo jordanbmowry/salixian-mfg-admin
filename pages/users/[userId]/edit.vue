@@ -211,15 +211,6 @@ async function handleDeleteUser() {
     }
     sessionStorage.clear();
 
-    if (userId !== userStore.user_id) {
-      await navigateTo('/');
-      return;
-    }
-    await useFetch(`${baseUrl}/users/logout`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: useRequestHeaders(['cookie']),
-    });
     await navigateTo('/users');
   } catch (err) {
     console.error(err);
