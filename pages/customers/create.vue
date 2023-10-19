@@ -29,7 +29,7 @@
       </div>
 
       <form
-        @submit="handleConfirmCreateCustomer"
+        @submit.prevent="handleConfirmCreateCustomer"
         class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2"
       >
         <div class="px-4 py-6 sm:p-8">
@@ -402,7 +402,6 @@ watch(
 );
 
 watch(useShippingForBilling, (newValue) => {
-  console.log(newValue);
   if (newValue) {
     billing_address.value = shipping_address.value;
     billing_city.value = shipping_city.value;
