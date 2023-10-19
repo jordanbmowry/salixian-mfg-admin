@@ -33,13 +33,7 @@
                 class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
               >
                 <div class="sm:flex sm:items-start">
-                  <div
-                    class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10"
-                    :class="{
-                      'bg-red-100': dangerMode,
-                      'bg-stone-100': !dangerMode,
-                    }"
-                  >
+                  <div :class="iconWrapperClass">
                     <font-awesome-icon
                       v-if="dangerMode"
                       aria-hidden="true"
@@ -65,17 +59,7 @@
                   </div>
                 </div>
                 <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                  <button
-                    type="button"
-                    class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
-                    :class="{
-                      'bg-red-600': dangerMode,
-                      'hover:bg-red-500': dangerMode,
-                      'bg-stone-600': !dangerMode,
-                      'hover:bg-stone-500': !dangerMode,
-                    }"
-                    @click="confirmAction"
-                  >
+                  <button :class="confirmButtonClass" @click="confirmAction">
                     {{ confirmButtonText }}
                   </button>
                   <button
@@ -103,6 +87,7 @@ import {
   TransitionChild,
   TransitionRoot,
 } from '@headlessui/vue';
+import { ref, computed, watch } from 'vue';
 
 interface Props {
   heading: string;
@@ -116,18 +101,35 @@ const { heading, message, confirmButtonText, show, dangerMode } =
   defineProps<Props>();
 const emit = defineEmits(['update:open', 'confirm']);
 const isModalOpen = ref(show);
+
 watch(
   () => show,
   (newVal) => {
     isModalOpen.value = newVal;
   }
 );
+
 const closeModal = () => {
   isModalOpen.value = false;
   emit('update:open', false);
 };
+
 const confirmAction = () => {
   emit('confirm');
   closeModal();
 };
+
+const iconWrapperClass = computed(() => {
+  return `mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10 ${
+    dangerMode ? 'bg-red-100' : 'bg-stone-100'
+  }`;
+});
+
+const confirmButtonClass = computed(() => {
+  return `inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm sm:ml-3 sm:w-auto ${
+    dangerMode
+      ? 'bg-red-600 text-white hover:bg-red-500'
+      : 'bg-stone-600 text-white hover:bg-stone-500'
+  }`;
+});
 </script>
