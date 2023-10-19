@@ -10,7 +10,7 @@
           range
         />
 
-        <form class="grow" @submit="debounceOnSubmit">
+        <form class="grow" @submit.prevent="debounceOnSubmit">
           <div class="flex flex-col items-center">
             <Listbox as="div" v-model="selected" class="w-full">
               <div class="relative">
@@ -265,7 +265,7 @@ const buildUrl = () => {
   }
 
   if (selectedDates.value?.length) {
-    url += `&startDate=${selectedDates.value[0]}&endDate=${selectedDates.value[0]}`;
+    url += `&startDate=${selectedDates.value[0]}&endDate=${selectedDates.value[1]}`;
   }
 
   return url;
