@@ -1,8 +1,7 @@
 <script setup lang="ts">
-const handleError = () => {
-  clearError({
-    redirect: '/',
-  });
+const handleError = async () => {
+  clearError();
+  await navigateTo('/');
 };
 </script>
 

@@ -23,5 +23,5 @@ const template = computed(() => {
 </script>
 
 <template>
-  <component :is="template" />
+  <component v-if="error" :is="template" />
 </template>
