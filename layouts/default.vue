@@ -281,7 +281,7 @@ const sidebarOpen = ref(false);
         <div class="h-6 w-px bg-gray-900/10 lg:hidden" aria-hidden="true" />
 
         <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-          <form class="relative flex flex-1" action="#" method="GET"></form>
+          <div class="relative flex flex-1"></div>
           <div class="flex items-center gap-x-4 lg:gap-x-6">
             <!-- Profile dropdown -->
             <Menu as="div" class="relative">
