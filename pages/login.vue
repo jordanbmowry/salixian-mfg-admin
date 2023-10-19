@@ -54,6 +54,7 @@ const onSubmit = handleSubmit(async (formData) => {
     console.error(error);
   } finally {
     formSubmittingInProcess.value = false;
+    sessionStorage.clear();
   }
 });
 function handleDismiss() {
